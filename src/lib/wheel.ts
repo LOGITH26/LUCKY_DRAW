@@ -132,6 +132,10 @@ export function drawWheel(
     ctx.arc(0, 0, hubRadius - 4, 0, TWO_PI);
     ctx.clip();
 
+    // Enable high-quality image smoothing
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+
     const avail = (hubRadius - 4) * 2;
     const imgW = logoImage.naturalWidth;
     const imgH = logoImage.naturalHeight;
