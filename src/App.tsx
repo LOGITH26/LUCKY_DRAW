@@ -21,6 +21,8 @@ import {
 } from '@/lib/storage';
 
 const DEFAULT_ENTRIES = Array.from({ length: 100 }, (_, i) => String(i + 1));
+const STORAGE_KEY_ENTRIES = 'jbma_wheel_entries';
+const STORAGE_KEY_HISTORY = 'jbma_wheel_history';
 
 function App() {
   const [settings, setSettings] = useState<SettingsState>({
@@ -51,8 +53,50 @@ function App() {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [editingTitle, setEditingTitle] = useState(false);
 
-  const [entries, setEntries] = useState<string[]>(DEFAULT_ENTRIES);
-  const [history, setHistory] = useState<WinnerRecord[]>([]);
+  // Initialize entries from localStorage so refresh won't reset them
+  const [entries, setEntries] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY_ENTRIES);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed;
+        }
+      }
+    } catch (e) {
+      console.error('Failed to load entries from localStorage', e);
+    }
+    return DEFAULT_ENTRIES;
+  });
+
+  // Initialize history from localStorage
+  const [history, setHistory] = useState<WinnerRecord[]>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY_HISTORY);
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+      console.error('Failed to load history from localStorage', e);
+      return [];
+    }
+  });
+
+  // Persist entries on every update
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY_ENTRIES, JSON.stringify(entries));
+    } catch (e) {
+      console.error('Failed to save entries to localStorage', e);
+    }
+  }, [entries]);
+
+  // Persist history on every update
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+    } catch (e) {
+      console.error('Failed to save history to localStorage', e);
+    }
+  }, [history]);
 
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [settingsTab, setSettingsTab] = useState(0);
@@ -303,6 +347,15 @@ function App() {
     setEntries(newEntries);
   };
 
+  const handleClearHistory = () => {
+    setHistory([]);
+    try {
+      localStorage.removeItem(STORAGE_KEY_HISTORY);
+    } catch (e) {
+      console.error('Failed to clear history from localStorage', e);
+    }
+  };
+
   const headerFontCss = FONT_CSS[settings.headerFont];
 
   return (
@@ -336,8 +389,8 @@ function App() {
         />
       )}
 
-      {/* Main content */}
-      <main className={`flex-1 flex flex-col lg:flex-row gap-4 lg:gap-6 overflow-hidden ${isFullscreen ? 'p-0' : 'p-4 sm:p-6 lg:p-8'}`}>
+      {/* Main content - relative z-10 ensures wheel & panel sit directly above background artwork */}
+      <main className={`relative z-10 flex-1 flex flex-col lg:flex-row gap-4 lg:gap-6 overflow-hidden ${isFullscreen ? 'p-0' : 'p-4 sm:p-6 lg:p-8'}`}>
         {/* Left: Wheel stage */}
         <div className="flex-1 flex items-center justify-center min-h-0 pb-32">
           <SpinWheel
@@ -362,7 +415,7 @@ function App() {
               entries={entries}
               onEntriesChange={setEntries}
               history={history}
-              onClearHistory={() => setHistory([])}
+              onClearHistory={handleClearHistory}
               onOpenRangeModal={() => setRangeOpen(true)}
             />
           </div>
