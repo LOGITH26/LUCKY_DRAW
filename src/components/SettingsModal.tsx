@@ -2,15 +2,29 @@ import { useState, useRef, useEffect } from 'react';
 import {
   X, Volume2, Play, Square, Upload, Music, Image, Palette as PaletteIcon,
   Clock, PartyPopper, Type, Sparkles, Leaf, Lightbulb, Flower2,
-  Sun,
+  Sun, Pipette,
 } from 'lucide-react';
 import { PALETTE_OPTIONS } from '@/lib/colors';
 import { readFileAsDataURL } from '@/lib/storage';
 import { AudioEngine } from '@/lib/audio';
 
-export type FontFamily = 'system' | 'serif' | 'script' | 'bold-sans';
+export type FontFamily =
+  | 'system'
+  | 'serif'
+  | 'script'
+  | 'bold-sans'
+  | 'cinzel'
+  | 'playfair'
+  | 'montserrat'
+  | 'bebas'
+  | 'samarkan'
+  | 'cormorant'
+  | 'poppins'
+  | 'righteous';
+
 export type BorderStyle = 'metallic' | 'floral' | 'jewels';
 export type ConfettiStyle = 'petals' | 'glitter' | 'ribbons' | 'balloons';
+export type TitleColorTheme = 'gold' | 'silver' | 'bronze' | 'ruby' | 'emerald' | 'white' | 'custom';
 
 export interface SettingsState {
   spinDuration: number;
@@ -26,6 +40,9 @@ export interface SettingsState {
   // Event text
   eventTitle: string;
   eventSubtitle: string;
+  // Title colors
+  titleTheme?: TitleColorTheme;
+  titleCustomColor?: string;
   // Fonts
   sliceFont: FontFamily;
   winnerFont: FontFamily;
@@ -53,12 +70,51 @@ interface SettingsModalProps {
 
 type Tab = 'spinning' | 'celebration' | 'design' | 'stage';
 
-const FONT_OPTIONS: { value: FontFamily; label: string; css: string }[] = [
+export const FONT_OPTIONS: { value: FontFamily; label: string; css: string }[] = [
+  { value: 'cinzel', label: 'Cinzel Decorative (Regal & Classical)', css: "'Cinzel Decorative', serif" },
+  { value: 'playfair', label: 'Playfair Display (Elegant Serif)', css: "'Playfair Display', serif" },
+  { value: 'montserrat', label: 'Montserrat (Bold & Modern)', css: "'Montserrat', sans-serif" },
+  { value: 'bebas', label: 'Bebas Neue (Punchy & Tall)', css: "'Bebas Neue', sans-serif" },
+  { value: 'samarkan', label: 'Rozha One (Traditional Indian Display)', css: "'Rozha One', serif" },
+  { value: 'cormorant', label: 'Cormorant Garamond (Graceful Serif)', css: "'Cormorant Garamond', serif" },
+  { value: 'poppins', label: 'Poppins (Geometric Clean)', css: "'Poppins', sans-serif" },
+  { value: 'righteous', label: 'Righteous (Stage & Retro)', css: "'Righteous', sans-serif" },
   { value: 'system', label: 'System Sans', css: "system-ui, -apple-system, 'Segoe UI', sans-serif" },
-  { value: 'serif', label: 'Traditional Serif', css: "'Georgia', 'Times New Roman', serif" },
+  { value: 'serif', label: 'Traditional Serif (Georgia)', css: "'Georgia', 'Times New Roman', serif" },
   { value: 'script', label: 'Festive Script', css: "'Brush Script MT', 'Segoe Script', cursive" },
-  { value: 'bold-sans', label: 'Modern Bold Sans', css: "'Arial Black', 'Helvetica Neue', sans-serif" },
+  { value: 'bold-sans', label: 'Heavy Sans (Arial Black)', css: "'Arial Black', 'Helvetica Neue', sans-serif" },
 ];
+
+export const TITLE_COLOR_THEMES: Record<TitleColorTheme, { label: string; gradient: string }> = {
+  gold: {
+    label: 'Metallic Gold',
+    gradient: 'from-[#FFF6CC] via-[#F5D061] to-[#A37010]',
+  },
+  silver: {
+    label: 'Metallic Silver / Chrome',
+    gradient: 'from-[#FFFFFF] via-[#D1D5DB] to-[#6B7280]',
+  },
+  bronze: {
+    label: 'Metallic Bronze / Rose Gold',
+    gradient: 'from-[#FFE4D6] via-[#E0A985] to-[#8C4A2F]',
+  },
+  ruby: {
+    label: 'Ruby Festive',
+    gradient: 'from-[#FFE4E6] via-[#F43F5E] to-[#9F1239]',
+  },
+  emerald: {
+    label: 'Emerald Jewel',
+    gradient: 'from-[#D1FAE5] via-[#10B981] to-[#065F46]',
+  },
+  white: {
+    label: 'Pure Crisp White',
+    gradient: 'from-[#FFFFFF] via-[#F9FAFB] to-[#E5E7EB]',
+  },
+  custom: {
+    label: 'Custom Solid Color',
+    gradient: '',
+  },
+};
 
 const BORDER_OPTIONS: { value: BorderStyle; label: string; desc: string }[] = [
   { value: 'metallic', label: 'Metallic Ring', desc: 'Clean gold metallic band' },
@@ -73,12 +129,10 @@ const CONFETTI_OPTIONS: { value: ConfettiStyle; label: string; desc: string }[] 
   { value: 'balloons', label: 'Floating Balloons', desc: 'Balloons rise up gently' },
 ];
 
-export const FONT_CSS: Record<FontFamily, string> = {
-  system: FONT_OPTIONS[0].css,
-  serif: FONT_OPTIONS[1].css,
-  script: FONT_OPTIONS[2].css,
-  'bold-sans': FONT_OPTIONS[3].css,
-};
+export const FONT_CSS: Record<FontFamily, string> = FONT_OPTIONS.reduce(
+  (acc, item) => ({ ...acc, [item.value]: item.css }),
+  {} as Record<FontFamily, string>
+);
 
 export default function SettingsModal({
   open,
@@ -496,9 +550,9 @@ export default function SettingsModal({
               {/* Font family */}
               <div className="border-t border-amber-300/40 pt-5">
                 <label className="flex items-center gap-2 text-sm font-semibold text-amber-900 mb-3">
-                  <Type className="w-4 h-4" /> Font Family
+                  <Type className="w-4 h-4" /> Font Selections
                 </label>
-                <div className="space-y-3">
+                <div className="space-y-4">
                   <div>
                     <label className="text-xs text-amber-700/60 mb-1 block">Slice Numbers</label>
                     <select
@@ -572,6 +626,50 @@ export default function SettingsModal({
                     />
                   </div>
                 </div>
+              </div>
+
+              {/* Title color style & metallic finishes */}
+              <div className="border-t border-amber-300/40 pt-5">
+                <label className="flex items-center gap-2 text-sm font-semibold text-amber-900 mb-2">
+                  <Sparkles className="w-4 h-4" /> Title Color & Finish
+                </label>
+                <p className="text-xs text-amber-700/60 mb-3">
+                  Choose a metallic specular sheen or select your own custom color for the stage title.
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {(Object.keys(TITLE_COLOR_THEMES) as TitleColorTheme[]).map((themeKey) => (
+                    <button
+                      key={themeKey}
+                      type="button"
+                      onClick={() => update({ titleTheme: themeKey })}
+                      className={`px-3 py-2 text-xs font-semibold rounded-lg border text-center transition-all ${
+                        (state.titleTheme || 'gold') === themeKey
+                          ? 'border-amber-600 bg-amber-500 text-white shadow-sm ring-2 ring-amber-300'
+                          : 'border-amber-200/60 bg-white/80 text-amber-900 hover:bg-amber-100/60'
+                      }`}
+                    >
+                      {TITLE_COLOR_THEMES[themeKey].label}
+                    </button>
+                  ))}
+                </div>
+
+                {state.titleTheme === 'custom' && (
+                  <div className="flex items-center gap-3 mt-3 p-2.5 rounded-xl bg-amber-100/70 border border-amber-300/60">
+                    <Pipette className="w-4 h-4 text-amber-800" />
+                    <input
+                      type="color"
+                      value={state.titleCustomColor || '#FFD700'}
+                      onChange={(e) => update({ titleCustomColor: e.target.value })}
+                      className="w-8 h-8 cursor-pointer rounded-lg border border-gray-300 bg-transparent"
+                    />
+                    <div className="flex flex-col">
+                      <span className="text-xs font-semibold text-amber-900">Custom Title Color</span>
+                      <span className="text-[11px] text-amber-700/70 font-mono uppercase">
+                        {state.titleCustomColor || '#FFD700'}
+                      </span>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Corner embellishments */}
