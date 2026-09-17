@@ -54,7 +54,7 @@ export default function SpinWheel({
       entries,
       palette,
       logoImage,
-      hubSizeRatio: 0.48,
+      hubSizeRatio: 0.30,
       sliceFontCss,
       borderStyle,
     });
