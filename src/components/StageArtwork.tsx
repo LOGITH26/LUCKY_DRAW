@@ -28,7 +28,7 @@ export default function StageArtwork({ fullscreen }: StageArtworkProps) {
 
       {/* Center organizer badge - Enlarged sizing */}
       <img
-        src="/assets/images/organized_by_jbma copy.png"
+        src="/assets/images/organized_by_jbma.png"
         alt=""
         className={`pointer-events-none absolute bottom-1 left-1/2 -translate-x-1/2 select-none object-contain stage-artwork-center ${
           fullscreen
