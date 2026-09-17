@@ -432,7 +432,7 @@ function App() {
         )}
       </main>
 
-      {/* Fullscreen overlay — solid red pill title bar with high-contrast maroon subtitle */}
+      {/* Fullscreen overlay — solid red pill title bar with enhanced contrast subtitle */}
       {isFullscreen && (
         <>
           {/* Title + subtitle bar */}
@@ -473,10 +473,10 @@ function App() {
               </button>
             )}
 
-            {/* Subtitle with deep maroon text & light drop shadow */}
+            {/* Subtitle with deep maroon text, enhanced spacing & shadow */}
             {settings.eventSubtitle && (
               <span
-                className="pointer-events-auto mt-1 text-xs sm:text-sm font-black tracking-[0.25em] uppercase text-[#7f1d1d] drop-shadow-[0_1px_1px_rgba(255,255,255,0.7)]"
+                className="pointer-events-auto mt-2 text-sm sm:text-base font-black tracking-[0.25em] uppercase text-[#7f1d1d] drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)]"
                 style={{ fontFamily: headerFontCss }}
               >
                 {settings.eventSubtitle}
