@@ -8,6 +8,7 @@ import WinnerModal from '@/components/WinnerModal';
 import RangeModal from '@/components/RangeModal';
 import OnamBackground from '@/components/OnamBackground';
 import CornerEmbellishments from '@/components/CornerEmbellishments';
+import StageArtwork from '@/components/StageArtwork';
 import { AudioEngine } from '@/lib/audio';
 import { celebrateConfetti } from '@/lib/confetti';
 import { ONAM_PALETTE } from '@/lib/colors';
@@ -316,6 +317,7 @@ function App() {
         garlands={settings.cornerGarlands}
         fullscreen={isFullscreen}
       />
+      <StageArtwork fullscreen={isFullscreen} />
 
       {/* Top nav — hidden in fullscreen for a clean wheel-only view */}
       {!isFullscreen && (
