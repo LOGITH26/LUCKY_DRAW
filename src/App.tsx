@@ -399,9 +399,9 @@ function App() {
         />
       )}
 
-      {/* Main content - relative z-10 ensures wheel & panel sit directly above background artwork */}
+      {/* Main content */}
       <main className={`relative z-10 flex-1 flex flex-col lg:flex-row gap-4 lg:gap-6 overflow-hidden ${isFullscreen ? 'p-0' : 'p-4 sm:p-6 lg:p-8'}`}>
-        {/* Left: Wheel stage - added responsive top padding to clear the title banner */}
+        {/* Left: Wheel stage - top padding ensures wheel clears the fullscreen title */}
         <div className={`flex-1 flex items-center justify-center min-h-0 ${isFullscreen ? 'pt-16 sm:pt-20 pb-16' : 'pb-20'}`}>
           <SpinWheel
             entries={entries}
@@ -432,7 +432,7 @@ function App() {
         )}
       </main>
 
-      {/* Fullscreen overlay — solid red pill title bar at top, mute & exit buttons top-right */}
+      {/* Fullscreen overlay — solid red pill title bar with high-contrast maroon subtitle */}
       {isFullscreen && (
         <>
           {/* Title + subtitle bar */}
@@ -472,17 +472,12 @@ function App() {
                 <Pencil className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity text-amber-200 shrink-0" />
               </button>
             )}
+
+            {/* Subtitle with deep maroon text & light drop shadow */}
             {settings.eventSubtitle && (
               <span
-                className={`text-sm sm:text-base font-semibold tracking-widest uppercase pointer-events-auto filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] px-4 py-0.5 rounded-full bg-[#7f1d1d] border border-amber-400/50 mt-1 ${
-                  currentTheme === 'custom'
-                    ? ''
-                    : `bg-gradient-to-b ${themeGradient} bg-clip-text text-transparent`
-                }`}
-                style={{
-                  fontFamily: headerFontCss,
-                  ...(currentTheme === 'custom' ? { color: settings.titleCustomColor } : {}),
-                }}
+                className="pointer-events-auto mt-1 text-xs sm:text-sm font-black tracking-[0.25em] uppercase text-[#7f1d1d] drop-shadow-[0_1px_1px_rgba(255,255,255,0.7)]"
+                style={{ fontFamily: headerFontCss }}
               >
                 {settings.eventSubtitle}
               </span>
