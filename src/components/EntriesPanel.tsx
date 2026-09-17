@@ -97,7 +97,7 @@ export default function EntriesPanel({
   };
 
   return (
-    <div className="flex flex-col h-full bg-gradient-to-b from-amber-50/95 to-yellow-100/90 rounded-2xl shadow-xl border border-amber-300/50 overflow-hidden">
+    <div className="relative z-20 flex flex-col h-full bg-gradient-to-b from-amber-50/95 to-yellow-100/90 rounded-2xl shadow-xl border border-amber-300/50 overflow-hidden">
       {/* Tab header */}
       <div className="flex border-b border-amber-300/40 bg-amber-100/60">
         <TabButton active={tab === 'entries'} onClick={() => setTab('entries')} icon={<List className="w-4 h-4" />}>
@@ -161,7 +161,7 @@ export default function EntriesPanel({
           )}
 
           {/* Toolbar */}
-          <div className="flex items-center gap-1 px-3 py-2.5 border-t border-amber-200/40 bg-amber-50/40 flex-wrap">
+          <div className="relative z-30 flex items-center gap-1 px-3 py-2.5 border-t border-amber-200/40 bg-amber-50/40 flex-wrap">
             <ToolbarButton onClick={shuffle} label="Shuffle" icon={<Shuffle className="w-4 h-4" />} />
             <ToolbarButton onClick={sortAZ} label="Sort A-Z" icon={<ArrowDownAZ className="w-4 h-4" />} />
             <ToolbarButton onClick={sortNumeric} label="Sort 1-9" icon={<ArrowUpAZ className="w-4 h-4" />} />
@@ -273,7 +273,7 @@ function ToolbarButton({
     <button
       onClick={onClick}
       title={label}
-      className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 active:scale-95 ${
+      className={`relative z-30 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 active:scale-95 ${
         active
           ? 'bg-amber-500 text-white shadow-sm'
           : 'text-amber-800 hover:bg-amber-200/50 hover:text-amber-900'
