@@ -121,16 +121,16 @@ export default function SpinWheel({
   }, [spin]);
 
   return (
-    <div className="relative flex flex-col items-center justify-center w-full h-full">
-      <div className="relative w-full max-w-[min(85vh,720px)] aspect-square">
+    <div className="relative z-10 flex flex-col items-center justify-center w-full h-full">
+      <div className="relative z-10 w-full max-w-[min(85vh,720px)] aspect-square">
         <canvas
           ref={canvasRef}
           onClick={handleClick}
-          className={`w-full h-full cursor-pointer select-none ${isSpinning ? 'cursor-not-allowed' : 'hover:drop-shadow-2xl'}`}
+          className={`relative z-10 w-full h-full cursor-pointer select-none ${isSpinning ? 'cursor-not-allowed' : 'hover:drop-shadow-2xl'}`}
           style={{ filter: 'drop-shadow(0 12px 30px rgba(0,0,0,0.35))' }}
         />
 
-        <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 translate-y-full">
+        <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 translate-y-full z-20">
           <button
             onClick={spin}
             disabled={isSpinning || entries.length === 0}
