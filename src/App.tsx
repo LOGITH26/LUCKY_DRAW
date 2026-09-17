@@ -401,8 +401,8 @@ function App() {
 
       {/* Main content - relative z-10 ensures wheel & panel sit directly above background artwork */}
       <main className={`relative z-10 flex-1 flex flex-col lg:flex-row gap-4 lg:gap-6 overflow-hidden ${isFullscreen ? 'p-0' : 'p-4 sm:p-6 lg:p-8'}`}>
-        {/* Left: Wheel stage */}
-        <div className="flex-1 flex items-center justify-center min-h-0 pb-32">
+        {/* Left: Wheel stage - added responsive top padding to clear the title banner */}
+        <div className={`flex-1 flex items-center justify-center min-h-0 ${isFullscreen ? 'pt-16 sm:pt-20 pb-16' : 'pb-20'}`}>
           <SpinWheel
             entries={entries}
             palette={settings.palette}
