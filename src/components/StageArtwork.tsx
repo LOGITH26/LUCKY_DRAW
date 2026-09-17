@@ -12,8 +12,8 @@ export default function StageArtwork({ fullscreen }: StageArtworkProps) {
       <img
         src="/assets/images/for_left_side.png"
         alt=""
-        className={`pointer-events-none absolute bottom-0 left-0 select-none max-w-[200px] lg:max-w-[280px] object-contain stage-artwork-left ${
-          fullscreen ? 'stage-artwork-fullscreen max-w-[260px] lg:max-w-[340px]' : ''
+        className={`pointer-events-none absolute bottom-0 left-0 select-none object-contain stage-artwork-left ${
+          fullscreen ? 'stage-artwork-fullscreen max-w-[280px] lg:max-w-[360px]' : 'max-w-[220px] lg:max-w-[300px]'
         }`}
       />
 
@@ -21,19 +21,19 @@ export default function StageArtwork({ fullscreen }: StageArtworkProps) {
       <img
         src="/assets/images/for_right_side.png"
         alt=""
-        className={`pointer-events-none absolute bottom-0 right-0 select-none max-w-[200px] lg:max-w-[280px] object-contain stage-artwork-right ${
-          fullscreen ? 'stage-artwork-fullscreen max-w-[260px] lg:max-w-[340px]' : ''
+        className={`pointer-events-none absolute bottom-0 right-0 select-none object-contain stage-artwork-right ${
+          fullscreen ? 'stage-artwork-fullscreen max-w-[280px] lg:max-w-[360px]' : 'max-w-[220px] lg:max-w-[300px]'
         }`}
       />
 
-      {/* Center organizer badge */}
+      {/* Center organizer badge - preserved full size */}
       <img
         src="/assets/images/organized_by_jbma.png"
         alt=""
-        className={`pointer-events-none absolute bottom-1 left-1/2 -translate-x-1/2 select-none object-contain stage-artwork-center ${
+        className={`pointer-events-none absolute bottom-2 left-1/2 -translate-x-1/2 select-none object-contain stage-artwork-center ${
           fullscreen
-            ? 'h-14 sm:h-18 md:h-22 max-w-[85vw] stage-artwork-fullscreen'
-            : 'h-8 sm:h-10 md:h-12 max-w-[300px]'
+            ? 'h-16 sm:h-20 md:h-24 max-w-[85vw] stage-artwork-fullscreen'
+            : 'h-12 sm:h-14 md:h-16 max-w-[420px]'
         }`}
       />
     </div>
