@@ -104,8 +104,9 @@ export function drawWheel(
 
   ctx.restore();
 
-  // Center hub
-  const hubRadius = Math.max(130, (size * 0.36) / 2);
+  // Center hub - now dynamically driven by hubSizeRatio
+  const ratio = hubSizeRatio || 0.44;
+  const hubRadius = (size * ratio) / 2;
   ctx.save();
   ctx.translate(cx, cy);
 
