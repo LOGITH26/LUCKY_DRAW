@@ -339,7 +339,7 @@ function App() {
       {/* Main content */}
       <main className={`flex-1 flex flex-col lg:flex-row gap-4 lg:gap-6 overflow-hidden ${isFullscreen ? 'p-0' : 'p-4 sm:p-6 lg:p-8'}`}>
         {/* Left: Wheel stage */}
-        <div className="flex-1 flex items-center justify-center min-h-0 pb-20">
+        <div className="flex-1 flex items-center justify-center min-h-0 pb-32">
           <SpinWheel
             entries={entries}
             palette={settings.palette}

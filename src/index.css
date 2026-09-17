@@ -111,22 +111,26 @@
 
 /* Stage artwork overlays */
 .stage-artwork { position: fixed; inset: 0; pointer-events: none; z-index: 5; }
-.stage-artwork img { position: absolute; object-fit: contain; filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.35)); transition: opacity 0.3s ease; }
-.stage-artwork-left { left: 0; top: 50%; transform: translateY(-50%); width: 220px; max-width: 18vw; height: auto; opacity: 0.85; }
-.stage-artwork-right { right: 0; top: 50%; transform: translateY(-50%); width: 220px; max-width: 18vw; height: auto; opacity: 0.85; }
-.stage-artwork-center { left: 50%; bottom: 8px; transform: translateX(-50%); width: 180px; max-width: 15vw; height: auto; opacity: 0.9; }
-.stage-artwork-fullscreen { opacity: 0.7; }
+.stage-artwork img { position: absolute; object-fit: contain; filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.35)); }
+.stage-artwork-left { left: 0; bottom: 0; width: 220px; max-width: 18vw; height: auto; opacity: 0.9; }
+.stage-artwork-right { right: 0; bottom: 0; width: 220px; max-width: 18vw; height: auto; opacity: 0.9; }
+.stage-artwork-center { left: 50%; bottom: 24px; transform: translateX(-50%); width: 300px; max-width: 28vw; height: auto; opacity: 1; }
 .stage-artwork-left.stage-artwork-fullscreen { width: 260px; max-width: 22vw; }
 .stage-artwork-right.stage-artwork-fullscreen { width: 260px; max-width: 22vw; }
-.stage-artwork-center.stage-artwork-fullscreen { width: 220px; max-width: 18vw; bottom: 16px; }
+.stage-artwork-center.stage-artwork-fullscreen { width: 360px; max-width: 34vw; bottom: 32px; }
 
 @media (max-width: 768px) {
-  .stage-artwork-left, .stage-artwork-right { width: 120px; max-width: 22vw; }
-  .stage-artwork-center { width: 120px; }
+  .stage-artwork-left, .stage-artwork-right { width: 130px; max-width: 24vw; }
+  .stage-artwork-center { width: 190px; max-width: 42vw; bottom: 20px; }
+  .stage-artwork-left.stage-artwork-fullscreen, .stage-artwork-right.stage-artwork-fullscreen { width: 150px; max-width: 26vw; }
+  .stage-artwork-center.stage-artwork-fullscreen { width: 220px; max-width: 48vw; bottom: 24px; }
 }
 
 @media (max-width: 640px) {
-  .stage-artwork-left, .stage-artwork-right, .stage-artwork-center { display: none; }
+  .stage-artwork-left, .stage-artwork-right { width: 92px; max-width: 23vw; }
+  .stage-artwork-center { width: 150px; max-width: 44vw; bottom: 16px; }
+  .stage-artwork-left.stage-artwork-fullscreen, .stage-artwork-right.stage-artwork-fullscreen { width: 108px; max-width: 25vw; }
+  .stage-artwork-center.stage-artwork-fullscreen { width: 175px; max-width: 50vw; bottom: 18px; }
 }
 
 /* Custom scrollbar for the entries panel */
