@@ -26,14 +26,14 @@ export default function StageArtwork({ fullscreen }: StageArtworkProps) {
         }`}
       />
 
-      {/* Center organizer badge - Enlarged sizing */}
+      {/* Center organizer badge - Enlarged */}
       <img
         src="/assets/images/organized_by_jbma.png?v=2"
         alt=""
         className={`pointer-events-none absolute bottom-1 left-1/2 -translate-x-1/2 select-none object-contain stage-artwork-center ${
           fullscreen
-            ? 'h-18 sm:h-24 md:h-28 lg:h-32 max-w-[90vw] stage-artwork-fullscreen'
-            : 'h-14 md:h-20 lg:h-26 max-w-[600px]'
+            ? 'h-24 sm:h-32 md:h-36 lg:h-44 max-w-[95vw] stage-artwork-fullscreen'
+            : 'h-20 sm:h-24 md:h-28 lg:h-36 max-w-[750px]'
         }`}
       />
     </div>
