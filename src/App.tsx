@@ -7,7 +7,6 @@ import SettingsModal, {
   SettingsState,
   FONT_CSS,
   TITLE_COLOR_THEMES,
-  type TitleColorTheme,
 } from '@/components/SettingsModal';
 import WinnerModal from '@/components/WinnerModal';
 import RangeModal from '@/components/RangeModal';
@@ -433,7 +432,7 @@ function App() {
         )}
       </main>
 
-      {/* Fullscreen overlay — dynamic title bar at top, mute & exit buttons top-right */}
+      {/* Fullscreen overlay — solid red pill title bar at top, mute & exit buttons top-right */}
       {isFullscreen && (
         <>
           {/* Title + subtitle bar */}
@@ -447,7 +446,7 @@ function App() {
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') setEditingTitle(false);
                 }}
-                className="pointer-events-auto text-center text-2xl sm:text-3xl font-extrabold bg-black/60 backdrop-blur-md rounded-xl px-4 py-1.5 outline-none border-2 border-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.5)] transition-all max-w-[80vw]"
+                className="pointer-events-auto text-center text-2xl sm:text-3xl font-extrabold bg-gradient-to-b from-[#b91c1c] to-[#7f1d1d] rounded-2xl px-6 py-2 outline-none border-2 border-amber-400 shadow-[0_6px_20px_rgba(0,0,0,0.6)] transition-all max-w-[80vw]"
                 style={{
                   fontFamily: headerFontCss,
                   color: currentTheme === 'custom' ? settings.titleCustomColor : '#FDE68A',
@@ -457,11 +456,11 @@ function App() {
             ) : (
               <button
                 onClick={() => setEditingTitle(true)}
-                className="pointer-events-auto group flex items-center gap-2 text-2xl sm:text-4xl font-black bg-black/40 hover:bg-black/60 backdrop-blur-md rounded-2xl px-6 py-2 border border-white/20 shadow-[0_4px_20px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.3)] transition-all"
+                className="pointer-events-auto group flex items-center gap-2 text-2xl sm:text-4xl font-black bg-gradient-to-b from-[#b91c1c] via-[#991b1b] to-[#7f1d1d] hover:from-[#dc2626] hover:to-[#991b1b] rounded-2xl px-8 py-2.5 border-2 border-amber-400/80 shadow-[0_8px_25px_rgba(127,29,29,0.7),inset_0_1px_2px_rgba(255,255,255,0.35)] transition-all active:scale-95"
                 style={{ fontFamily: headerFontCss }}
               >
                 <span
-                  className={`truncate max-w-[60vw] tracking-wider filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.85)] ${
+                  className={`truncate max-w-[60vw] tracking-wider filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] ${
                     currentTheme === 'custom'
                       ? ''
                       : `bg-gradient-to-b ${themeGradient} bg-clip-text text-transparent`
@@ -470,12 +469,12 @@ function App() {
                 >
                   {settings.eventTitle}
                 </span>
-                <Pencil className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity text-white/80 shrink-0" />
+                <Pencil className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity text-amber-200 shrink-0" />
               </button>
             )}
             {settings.eventSubtitle && (
               <span
-                className={`text-sm sm:text-base font-semibold tracking-widest uppercase pointer-events-auto filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] ${
+                className={`text-sm sm:text-base font-semibold tracking-widest uppercase pointer-events-auto filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] px-4 py-0.5 rounded-full bg-[#7f1d1d] border border-amber-400/50 mt-1 ${
                   currentTheme === 'custom'
                     ? ''
                     : `bg-gradient-to-b ${themeGradient} bg-clip-text text-transparent`
