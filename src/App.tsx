@@ -3,7 +3,12 @@ import { Pencil } from 'lucide-react';
 import TopNav from '@/components/TopNav';
 import SpinWheel from '@/components/SpinWheel';
 import EntriesPanel, { WinnerRecord } from '@/components/EntriesPanel';
-import SettingsModal, { SettingsState, FONT_CSS } from '@/components/SettingsModal';
+import SettingsModal, {
+  SettingsState,
+  FONT_CSS,
+  TITLE_COLOR_THEMES,
+  type TitleColorTheme,
+} from '@/components/SettingsModal';
 import WinnerModal from '@/components/WinnerModal';
 import RangeModal from '@/components/RangeModal';
 import OnamBackground from '@/components/OnamBackground';
@@ -38,6 +43,8 @@ function App() {
     paletteName: 'Onam Festive',
     eventTitle: defaultSettings.eventTitle,
     eventSubtitle: defaultSettings.eventSubtitle,
+    titleTheme: 'gold',
+    titleCustomColor: '#F59E0B',
     sliceFont: defaultSettings.sliceFont as SettingsState['sliceFont'],
     winnerFont: defaultSettings.winnerFont as SettingsState['winnerFont'],
     headerFont: defaultSettings.headerFont as SettingsState['headerFont'],
@@ -130,6 +137,8 @@ function App() {
         customVictoryAudio: victoryAudio,
         eventTitle: persisted.eventTitle || defaultSettings.eventTitle,
         eventSubtitle: persisted.eventSubtitle || defaultSettings.eventSubtitle,
+        titleTheme: (persisted as any).titleTheme || 'gold',
+        titleCustomColor: (persisted as any).titleCustomColor || '#F59E0B',
         sliceFont: (persisted.sliceFont || defaultSettings.sliceFont) as SettingsState['sliceFont'],
         winnerFont: (persisted.winnerFont || defaultSettings.winnerFont) as SettingsState['winnerFont'],
         headerFont: (persisted.headerFont || defaultSettings.headerFont) as SettingsState['headerFont'],
@@ -162,6 +171,8 @@ function App() {
       title: settings.eventTitle,
       eventTitle: settings.eventTitle,
       eventSubtitle: settings.eventSubtitle,
+      titleTheme: settings.titleTheme,
+      titleCustomColor: settings.titleCustomColor,
       sliceFont: settings.sliceFont,
       winnerFont: settings.winnerFont,
       headerFont: settings.headerFont,
@@ -171,7 +182,7 @@ function App() {
       cornerGarlands: settings.cornerGarlands,
       vignette: settings.vignette,
       confettiStyle: settings.confettiStyle,
-    });
+    } as any);
   }, [settings, muted]);
 
   useEffect(() => {
@@ -356,7 +367,9 @@ function App() {
     }
   };
 
-  const headerFontCss = FONT_CSS[settings.headerFont];
+  const headerFontCss = FONT_CSS[settings.headerFont] || 'inherit';
+  const currentTheme = settings.titleTheme || 'gold';
+  const themeGradient = TITLE_COLOR_THEMES[currentTheme]?.gradient || TITLE_COLOR_THEMES.gold.gradient;
 
   return (
     <div className="min-h-screen flex flex-col overflow-hidden font-sans text-gray-900">
@@ -422,7 +435,7 @@ function App() {
         )}
       </main>
 
-      {/* Fullscreen overlay — metallic gold title bar at top, mute & exit buttons top-right */}
+      {/* Fullscreen overlay — dynamic title bar at top, mute & exit buttons top-right */}
       {isFullscreen && (
         <>
           {/* Title + subtitle bar */}
@@ -436,26 +449,43 @@ function App() {
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') setEditingTitle(false);
                 }}
-                className="pointer-events-auto text-center text-2xl sm:text-3xl font-extrabold text-amber-200 bg-black/60 backdrop-blur-md rounded-xl px-4 py-1.5 outline-none border-2 border-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.5)] transition-all max-w-[80vw]"
-                style={{ fontFamily: headerFontCss }}
+                className="pointer-events-auto text-center text-2xl sm:text-3xl font-extrabold bg-black/60 backdrop-blur-md rounded-xl px-4 py-1.5 outline-none border-2 border-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.5)] transition-all max-w-[80vw]"
+                style={{
+                  fontFamily: headerFontCss,
+                  color: currentTheme === 'custom' ? settings.titleCustomColor : '#FDE68A',
+                }}
                 placeholder="Enter title..."
               />
             ) : (
               <button
                 onClick={() => setEditingTitle(true)}
-                className="pointer-events-auto group flex items-center gap-2 text-2xl sm:text-4xl font-black bg-black/40 hover:bg-black/60 backdrop-blur-md rounded-2xl px-6 py-2 border border-amber-300/30 shadow-[0_4px_20px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.4)] transition-all"
+                className="pointer-events-auto group flex items-center gap-2 text-2xl sm:text-4xl font-black bg-black/40 hover:bg-black/60 backdrop-blur-md rounded-2xl px-6 py-2 border border-white/20 shadow-[0_4px_20px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.3)] transition-all"
                 style={{ fontFamily: headerFontCss }}
               >
-                <span className="truncate max-w-[60vw] bg-gradient-to-b from-[#FFF6CC] via-[#F5D061] to-[#A37010] bg-clip-text text-transparent filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] tracking-wider">
+                <span
+                  className={`truncate max-w-[60vw] tracking-wider filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.85)] ${
+                    currentTheme === 'custom'
+                      ? ''
+                      : `bg-gradient-to-b ${themeGradient} bg-clip-text text-transparent`
+                  }`}
+                  style={currentTheme === 'custom' ? { color: settings.titleCustomColor } : undefined}
+                >
                   {settings.eventTitle}
                 </span>
-                <Pencil className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity text-amber-300 shrink-0" />
+                <Pencil className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity text-white/80 shrink-0" />
               </button>
             )}
             {settings.eventSubtitle && (
               <span
-                className="text-sm sm:text-base font-semibold tracking-widest uppercase bg-gradient-to-b from-amber-100 via-amber-200 to-amber-500 bg-clip-text text-transparent filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] pointer-events-auto"
-                style={{ fontFamily: headerFontCss }}
+                className={`text-sm sm:text-base font-semibold tracking-widest uppercase pointer-events-auto filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] ${
+                  currentTheme === 'custom'
+                    ? ''
+                    : `bg-gradient-to-b ${themeGradient} bg-clip-text text-transparent`
+                }`}
+                style={{
+                  fontFamily: headerFontCss,
+                  ...(currentTheme === 'custom' ? { color: settings.titleCustomColor } : {}),
+                }}
               >
                 {settings.eventSubtitle}
               </span>
