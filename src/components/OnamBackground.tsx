@@ -9,15 +9,6 @@ export default function OnamBackground({
     return (
       <div className="fixed inset-0 -z-10">
         <img src={customBg} alt="" className="w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-black/30" />
-        {vignette > 0 && (
-          <div
-            className="absolute inset-0"
-            style={{
-              background: `radial-gradient(ellipse at center, transparent ${50 - vignette * 30}%, rgba(0,0,0,${vignette * 0.6}) 100%)`,
-            }}
-          />
-        )}
       </div>
     );
   }
@@ -63,7 +54,7 @@ export default function OnamBackground({
         <rect width="800" height="800" fill="url(#pookkalam)" />
       </svg>
 
-      {/* Vignette */}
+      {/* Vignette for default theme */}
       {vignette > 0 && (
         <div
           className="absolute inset-0"
