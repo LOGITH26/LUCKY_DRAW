@@ -33,6 +33,7 @@ export default function SpinWheel({
   const rotationRef = useRef(0);
   const spinningRef = useRef(false);
   const animFrameRef = useRef<number | null>(null);
+  const idleAnimRef = useRef<number | null>(null);
   const [isSpinning, setIsSpinning] = useState(false);
 
   const render = useCallback(() => {
@@ -54,15 +55,39 @@ export default function SpinWheel({
       entries,
       palette,
       logoImage,
-      hubSizeRatio: 0.48,
+      hubSizeRatio: 0.44,
       sliceFontCss,
       borderStyle,
     });
   }, [entries, palette, logoImage, sliceFontCss, borderStyle]);
 
+  // Idle slow spin loop when wheel is waiting
   useEffect(() => {
-    render();
-  }, [render]);
+    if (isSpinning || entries.length === 0) return;
+
+    let lastTime = performance.now();
+    const idleSpeed = 0.0035; // Adjust this value to make idle rotation faster or slower
+
+    const stepIdle = (now: number) => {
+      if (spinningRef.current) return;
+      const dt = now - lastTime;
+      lastTime = now;
+
+      // Increment rotation continuously (scale by ~60fps frame delta)
+      rotationRef.current = (rotationRef.current + idleSpeed * (dt / 16.67)) % TWO_PI;
+      render();
+
+      idleAnimRef.current = requestAnimationFrame(stepIdle);
+    };
+
+    idleAnimRef.current = requestAnimationFrame(stepIdle);
+
+    return () => {
+      if (idleAnimRef.current) {
+        cancelAnimationFrame(idleAnimRef.current);
+      }
+    };
+  }, [isSpinning, entries.length, render]);
 
   useEffect(() => {
     const handleResize = () => render();
@@ -72,17 +97,25 @@ export default function SpinWheel({
 
   const spin = useCallback(() => {
     if (spinningRef.current || entries.length === 0) return;
+
+    // Stop idle animation immediately
+    if (idleAnimRef.current) {
+      cancelAnimationFrame(idleAnimRef.current);
+    }
+
     spinningRef.current = true;
     setIsSpinning(true);
 
     const durationMs = spinDuration * 1000;
+    const currentAngle = rotationRef.current;
+
     const { targetRotation, winnerIndex } = computeSpinResult(
-      rotationRef.current,
+      currentAngle,
       entries.length,
       durationMs
     );
 
-    const startRotation = rotationRef.current;
+    const startRotation = currentAngle;
     const delta = targetRotation - startRotation;
     const startTime = performance.now();
 
@@ -101,7 +134,7 @@ export default function SpinWheel({
       } else {
         rotationRef.current = ((rotationRef.current % TWO_PI) + TWO_PI) % TWO_PI;
         spinningRef.current = false;
-        setIsSpinning(false);
+        setIsSpinning(false); // Resumes idle spin loop
         audioEngine.stopTicker();
         onSpinComplete(winnerIndex, entries[winnerIndex]);
       }
@@ -122,7 +155,6 @@ export default function SpinWheel({
 
   return (
     <div className="relative z-10 flex flex-col items-center justify-center w-full h-full">
-      {/* Sizing expanded to min(86vh, 820px) */}
       <div className="relative z-10 w-full max-w-[min(86vh,820px)] aspect-square">
         <canvas
           ref={canvasRef}
