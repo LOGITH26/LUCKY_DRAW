@@ -422,7 +422,7 @@ function App() {
         )}
       </main>
 
-      {/* Fullscreen overlay — title bar at top, mute & exit buttons top-right */}
+      {/* Fullscreen overlay — metallic gold title bar at top, mute & exit buttons top-right */}
       {isFullscreen && (
         <>
           {/* Title + subtitle bar */}
@@ -436,23 +436,25 @@ function App() {
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') setEditingTitle(false);
                 }}
-                className="pointer-events-auto text-center text-2xl sm:text-3xl font-bold text-white bg-black/40 backdrop-blur-sm rounded-xl px-4 py-1.5 outline-none border-2 border-amber-400/60 focus:border-amber-400 transition-all max-w-[80vw]"
+                className="pointer-events-auto text-center text-2xl sm:text-3xl font-extrabold text-amber-200 bg-black/60 backdrop-blur-md rounded-xl px-4 py-1.5 outline-none border-2 border-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.5)] transition-all max-w-[80vw]"
                 style={{ fontFamily: headerFontCss }}
                 placeholder="Enter title..."
               />
             ) : (
               <button
                 onClick={() => setEditingTitle(true)}
-                className="pointer-events-auto group flex items-center gap-2 text-2xl sm:text-3xl font-bold text-white bg-black/30 hover:bg-black/50 backdrop-blur-sm rounded-xl px-5 py-1.5 transition-all"
+                className="pointer-events-auto group flex items-center gap-2 text-2xl sm:text-4xl font-black bg-black/40 hover:bg-black/60 backdrop-blur-md rounded-2xl px-6 py-2 border border-amber-300/30 shadow-[0_4px_20px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.4)] transition-all"
                 style={{ fontFamily: headerFontCss }}
               >
-                <span className="truncate max-w-[60vw]">{settings.eventTitle}</span>
-                <Pencil className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity text-amber-300" />
+                <span className="truncate max-w-[60vw] bg-gradient-to-b from-[#FFF6CC] via-[#F5D061] to-[#A37010] bg-clip-text text-transparent filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] tracking-wider">
+                  {settings.eventTitle}
+                </span>
+                <Pencil className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity text-amber-300 shrink-0" />
               </button>
             )}
             {settings.eventSubtitle && (
               <span
-                className="text-sm sm:text-base text-amber-200/80 font-medium tracking-wide pointer-events-auto"
+                className="text-sm sm:text-base font-semibold tracking-widest uppercase bg-gradient-to-b from-amber-100 via-amber-200 to-amber-500 bg-clip-text text-transparent filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] pointer-events-auto"
                 style={{ fontFamily: headerFontCss }}
               >
                 {settings.eventSubtitle}
