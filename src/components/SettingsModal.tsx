@@ -435,21 +435,25 @@ export default function SettingsModal({
                   onChange={(e) => handleLogoUpload(e.target.files?.[0])}
                   className="block w-full text-sm text-amber-800 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-amber-600 file:text-white hover:file:bg-amber-700 file:cursor-pointer cursor-pointer"
                 />
-                {state.customLogo && (
-                  <div className="mt-3 flex items-center gap-3">
-                    <img
-                      src={state.customLogo}
-                      alt="Logo preview"
-                      className="w-16 h-16 rounded-full object-cover border-2 border-amber-400 shadow-md"
-                    />
-                    <button
-                      onClick={() => update({ customLogo: null })}
-                      className="text-xs text-red-600 hover:text-red-700 font-medium"
-                    >
-                      Remove logo
-                    </button>
-                  </div>
-                )}
+                <div className="mt-3 flex items-center gap-3">
+                  {state.customLogo ? (
+                    <>
+                      <img
+                        src={state.customLogo}
+                        alt="Logo preview"
+                        className="w-16 h-16 rounded-full object-cover border-2 border-amber-400 shadow-md"
+                      />
+                      <button
+                        onClick={() => update({ customLogo: null })}
+                        className="text-xs text-red-600 hover:text-red-700 font-medium"
+                      >
+                        Remove logo
+                      </button>
+                    </>
+                  ) : (
+                    <span className="text-xs text-amber-700/60 italic">Using default Onam logo motif</span>
+                  )}
+                </div>
               </div>
 
               {/* Background */}
@@ -466,21 +470,25 @@ export default function SettingsModal({
                   onChange={(e) => handleBgUpload(e.target.files?.[0])}
                   className="block w-full text-sm text-amber-800 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-amber-600 file:text-white hover:file:bg-amber-700 file:cursor-pointer cursor-pointer"
                 />
-                {state.customBg && (
-                  <div className="mt-3 flex items-center gap-3">
-                    <img
-                      src={state.customBg}
-                      alt="Background preview"
-                      className="w-24 h-16 rounded-lg object-cover border-2 border-amber-400 shadow-md"
-                    />
-                    <button
-                      onClick={() => update({ customBg: null, useCustomBg: false })}
-                      className="text-xs text-red-600 hover:text-red-700 font-medium"
-                    >
-                      Remove & use preset
-                    </button>
-                  </div>
-                )}
+                <div className="mt-3 flex items-center gap-3">
+                  {state.customBg ? (
+                    <>
+                      <img
+                        src={state.customBg}
+                        alt="Background preview"
+                        className="w-24 h-16 rounded-lg object-cover border-2 border-amber-400 shadow-md"
+                      />
+                      <button
+                        onClick={() => update({ customBg: null, useCustomBg: false })}
+                        className="text-xs text-red-600 hover:text-red-700 font-medium"
+                      >
+                        Remove & use preset
+                      </button>
+                    </>
+                  ) : (
+                    <span className="text-xs text-amber-700/60 italic">Using default background theme</span>
+                  )}
+                </div>
                 <label className="flex items-center gap-3 mt-3 cursor-pointer">
                   <input
                     type="checkbox"
