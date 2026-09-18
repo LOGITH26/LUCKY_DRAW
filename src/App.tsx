@@ -47,7 +47,7 @@ function App() {
     autoRemoveWinner: defaultSettings.autoRemoveWinner,
     customLogo: null,
     customBg: null,
-    useCustomBg: false,
+    useCustomBg: true, // Enabled default custom background flag
     customVictoryAudio: null,
     palette: ONAM_PALETTE,
     paletteName: 'Onam Festive',
@@ -147,6 +147,7 @@ function App() {
     const init = async () => {
       const persisted = loadSettings();
       let logo = await loadAsset('customLogo');
+      let bg = await loadAsset('customBg');
       
       // If no custom logo is saved yet, set the default logo automatically
       if (!logo) {
@@ -158,7 +159,16 @@ function App() {
         }
       }
 
-      const bg = await loadAsset('customBg');
+      // If no custom background is saved yet, set the default background automatically
+      if (!bg) {
+        try {
+          bg = await urlToDataUrl('/images/bg.png');
+          await saveAsset('customBg', bg);
+        } catch (err) {
+          console.error('Failed to load default background asset', err);
+        }
+      }
+
       const victoryAudio = await loadAsset('customVictoryAudio');
 
       const loaded: SettingsState = {
@@ -169,7 +179,7 @@ function App() {
         autoRemoveWinner: persisted.autoRemoveWinner,
         customLogo: logo,
         customBg: bg,
-        useCustomBg: persisted.useCustomBg && !!bg,
+        useCustomBg: persisted.useCustomBg ?? true,
         customVictoryAudio: victoryAudio,
         eventTitle: persisted.eventTitle || 'Onaghosham Lucky Draw',
         eventSubtitle: persisted.eventSubtitle || defaultSettings.eventSubtitle,
