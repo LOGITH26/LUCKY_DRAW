@@ -438,10 +438,9 @@ export default function SettingsModal({
                 <div className="mt-3 flex items-center gap-3">
                   {state.customLogo ? (
                     <>
-                      <img
-                        src={state.customLogo}
-                        alt="Logo preview"
-                        className="w-16 h-16 rounded-full object-cover border-2 border-amber-400 shadow-md"
+                      <div
+                        className="w-16 h-16 rounded-full bg-cover bg-center border-2 border-amber-400 shadow-md shrink-0"
+                        style={{ backgroundImage: `url(${state.customLogo})` }}
                       />
                       <button
                         onClick={() => update({ customLogo: null })}
@@ -473,10 +472,9 @@ export default function SettingsModal({
                 <div className="mt-3 flex items-center gap-3">
                   {state.customBg ? (
                     <>
-                      <img
-                        src={state.customBg}
-                        alt="Background preview"
-                        className="w-24 h-16 rounded-lg object-cover border-2 border-amber-400 shadow-md"
+                      <div
+                        className="w-24 h-16 rounded-lg bg-cover bg-center border-2 border-amber-400 shadow-md shrink-0"
+                        style={{ backgroundImage: `url(${state.customBg})` }}
                       />
                       <button
                         onClick={() => update({ customBg: null, useCustomBg: false })}
