@@ -27,11 +27,23 @@ const DEFAULT_ENTRIES = Array.from({ length: 100 }, (_, i) => String(i + 1));
 const STORAGE_KEY_ENTRIES = 'jbma_wheel_entries';
 const STORAGE_KEY_HISTORY = 'jbma_wheel_history';
 
+// Helper to convert an image path to a base64 data URL so it can be stored persistently in localStorage/IndexedDB
+async function urlToDataUrl(url: string): Promise<string> {
+  const response = await fetch(url);
+  const blob = await response.blob();
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
 function App() {
   const [settings, setSettings] = useState<SettingsState>({
     spinDuration: defaultSettings.spinDuration,
-    tickerVolume: defaultSettings.tickerVolume,
-    celebrationVolume: defaultSettings.celebrationVolume,
+    tickerVolume: 1.0, // Increased default ticker volume
+    celebrationVolume: 1.0, // Increased default celebration volume
     autoRemoveWinner: defaultSettings.autoRemoveWinner,
     customLogo: null,
     customBg: null,
@@ -39,7 +51,7 @@ function App() {
     customVictoryAudio: null,
     palette: ONAM_PALETTE,
     paletteName: 'Onam Festive',
-    eventTitle: defaultSettings.eventTitle,
+    eventTitle: 'Onaghosham Lucky Draw', // Updated default title
     eventSubtitle: defaultSettings.eventSubtitle,
     titleTheme: 'gold',
     titleCustomColor: '#F59E0B',
@@ -134,21 +146,32 @@ function App() {
   useEffect(() => {
     const init = async () => {
       const persisted = loadSettings();
-      const logo = await loadAsset('customLogo');
+      let logo = await loadAsset('customLogo');
+      
+      // If no custom logo is saved yet, set the default logo automatically
+      if (!logo) {
+        try {
+          logo = await urlToDataUrl('/images/logo.png');
+          await saveAsset('customLogo', logo);
+        } catch (err) {
+          console.error('Failed to load default logo asset', err);
+        }
+      }
+
       const bg = await loadAsset('customBg');
       const victoryAudio = await loadAsset('customVictoryAudio');
 
       const loaded: SettingsState = {
         ...settings,
         spinDuration: persisted.spinDuration,
-        tickerVolume: persisted.tickerVolume,
-        celebrationVolume: persisted.celebrationVolume,
+        tickerVolume: persisted.tickerVolume ?? 1.0,
+        celebrationVolume: persisted.celebrationVolume ?? 1.0,
         autoRemoveWinner: persisted.autoRemoveWinner,
         customLogo: logo,
         customBg: bg,
         useCustomBg: persisted.useCustomBg && !!bg,
         customVictoryAudio: victoryAudio,
-        eventTitle: persisted.eventTitle || defaultSettings.eventTitle,
+        eventTitle: persisted.eventTitle || 'Onaghosham Lucky Draw',
         eventSubtitle: persisted.eventSubtitle || defaultSettings.eventSubtitle,
         titleTheme: (persisted as any).titleTheme || 'gold',
         titleCustomColor: (persisted as any).titleCustomColor || '#F59E0B',
@@ -428,8 +451,8 @@ function App() {
 
       {/* Main content */}
       <main className={`relative z-10 flex-1 flex flex-col lg:flex-row gap-4 lg:gap-6 overflow-hidden ${isFullscreen ? 'p-0' : 'p-4 sm:p-6 lg:p-8'}`}>
-        {/* Left: Wheel stage - top padding ensures wheel clears the fullscreen title */}
-        <div className={`flex-1 flex items-center justify-center min-h-0 ${isFullscreen ? 'pt-16 sm:pt-20 pb-16' : 'pb-20'}`}>
+        {/* Left: Wheel stage - slightly reduced max container size so it doesn't overlap header/wordings */}
+        <div className={`flex-1 flex items-center justify-center min-h-0 scale-95 origin-center ${isFullscreen ? 'pt-16 sm:pt-20 pb-16' : 'pb-20'}`}>
           <SpinWheel
             entries={entries}
             palette={settings.palette}
