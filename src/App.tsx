@@ -265,9 +265,6 @@ function App() {
   };
 
   const handleKeepWinner = () => {
-    if (winner && settings.autoRemoveWinner) {
-      setEntries((prev) => prev.filter((_, i) => i !== winner.index));
-    }
     setWinner(null);
   };
 
