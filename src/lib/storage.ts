@@ -56,8 +56,8 @@ export async function loadAsset(key: string): Promise<string | null> {
     });
     db.close();
 
-    // Auto-seed default assets using exact filenames from your project folder
-    if (!result) {
+    // Force re-seeding if the stored asset is missing, empty, or invalid
+    if (!result || result === 'null' || result.trim() === '') {
       if (key === 'customLogo') {
         try {
           result = await urlToDataUrl('/images/LOGO.png');
