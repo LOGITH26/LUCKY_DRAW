@@ -154,7 +154,7 @@ export default function SpinWheel({
   return (
     <div className="relative z-10 flex flex-col items-center justify-center w-full h-full">
       {/* Slightly reduced max-w size so it clears the top wordings */}
-      <div className="relative z-10 w-full max-w-[min(76vh,900px)] aspect-square">
+      <div className="relative z-10 w-full max-w-[min(76vh,800px)] aspect-square">
         <canvas
           ref={canvasRef}
           onClick={handleClick}
