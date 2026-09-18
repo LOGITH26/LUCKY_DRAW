@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Shuffle, ArrowDownAZ, ArrowUpAZ, Hash, Ban, Trash2, Download, List, Trophy } from 'lucide-react';
+import { Shuffle, ArrowDownAZ, ArrowUpAZ, Hash, Ban, Trash2, Download, List, Trophy, Undo2 } from 'lucide-react';
 
 export interface WinnerRecord {
   name: string;
@@ -12,6 +12,8 @@ interface EntriesPanelProps {
   history: WinnerRecord[];
   onClearHistory: () => void;
   onOpenRangeModal: () => void;
+  canUndo?: boolean;
+  onUndo?: () => void;
 }
 
 type Tab = 'entries' | 'results';
@@ -22,6 +24,8 @@ export default function EntriesPanel({
   history,
   onClearHistory,
   onOpenRangeModal,
+  canUndo = false,
+  onUndo,
 }: EntriesPanelProps) {
   const [tab, setTab] = useState<Tab>('entries');
   const [excludeText, setExcludeText] = useState('');
@@ -181,6 +185,14 @@ export default function EntriesPanel({
               History: <span className="text-amber-700 font-bold">{history.length}</span>
             </span>
             <div className="flex gap-2">
+              <button
+                onClick={onUndo}
+                disabled={!canUndo}
+                className="text-xs text-amber-700 hover:text-amber-900 transition-colors flex items-center gap-1 disabled:opacity-30"
+                title="Undo last spin"
+              >
+                <Undo2 className="w-3.5 h-3.5" /> Undo
+              </button>
               <button
                 onClick={exportCSV}
                 disabled={history.length === 0}

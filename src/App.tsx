@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Pencil } from 'lucide-react';
+import { Undo2, Pencil } from 'lucide-react';
 import TopNav from '@/components/TopNav';
 import SpinWheel from '@/components/SpinWheel';
 import EntriesPanel, { WinnerRecord } from '@/components/EntriesPanel';
@@ -108,11 +108,26 @@ function App() {
   const [rangeOpen, setRangeOpen] = useState(false);
   const [winner, setWinner] = useState<{ name: string; index: number } | null>(null);
 
+  // Undo snapshot: stores the state right before the most recent spin completed
+  const [undoSnapshot, setUndoSnapshot] = useState<{
+    entries: string[];
+    history: WinnerRecord[];
+    winner: { name: string; index: number } | null;
+  } | null>(null);
+
   const audioEngineRef = useRef<AudioEngine | null>(null);
   if (!audioEngineRef.current) {
     audioEngineRef.current = new AudioEngine();
   }
   const audioEngine = audioEngineRef.current;
+
+  // Refs to read current entries/history/winner inside callbacks without stale closures
+  const entriesRef = useRef(entries);
+  const historyRef = useRef(history);
+  const winnerRef = useRef(winner);
+  useEffect(() => { entriesRef.current = entries; }, [entries]);
+  useEffect(() => { historyRef.current = history; }, [history]);
+  useEffect(() => { winnerRef.current = winner; }, [winner]);
 
   const [logoImage, setLogoImage] = useState<HTMLImageElement | null>(null);
 
@@ -213,6 +228,13 @@ function App() {
 
   const handleSpinComplete = useCallback(
     (winnerIndex: number, winnerName: string) => {
+      // Save snapshot for undo before any state mutations
+      setUndoSnapshot({
+        entries: entriesRef.current,
+        history: historyRef.current,
+        winner: winnerRef.current,
+      });
+
       audioEngine.setCelebrationVolume(muted ? 0 : settings.celebrationVolume);
       if (settings.customVictoryAudio) {
         audioEngine.playCustomAudio(settings.customVictoryAudio);
@@ -247,6 +269,14 @@ function App() {
       setEntries((prev) => prev.filter((_, i) => i !== winner.index));
     }
     setWinner(null);
+  };
+
+  const handleUndo = () => {
+    if (!undoSnapshot) return;
+    setEntries(undoSnapshot.entries);
+    setHistory(undoSnapshot.history);
+    setWinner(undoSnapshot.winner);
+    setUndoSnapshot(null);
   };
 
   const toggleFullscreen = () => {
@@ -427,6 +457,8 @@ function App() {
               history={history}
               onClearHistory={handleClearHistory}
               onOpenRangeModal={() => setRangeOpen(true)}
+              canUndo={!!undoSnapshot}
+              onUndo={handleUndo}
             />
           </div>
         )}
@@ -486,6 +518,15 @@ function App() {
 
           {/* Mute & exit buttons */}
           <div className="fixed top-4 right-4 z-40 flex gap-2">
+            {undoSnapshot && (
+              <button
+                onClick={handleUndo}
+                className="px-3 py-2.5 rounded-lg bg-amber-600/90 text-white hover:bg-amber-500 transition-all backdrop-blur-sm flex items-center gap-1.5 font-medium text-sm"
+                aria-label="Undo last spin"
+              >
+                <Undo2 className="w-4 h-4" /> Undo
+              </button>
+            )}
             <button
               onClick={toggleMute}
               className="p-2.5 rounded-lg bg-black/40 text-white hover:bg-black/60 transition-all backdrop-blur-sm"
