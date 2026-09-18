@@ -66,13 +66,14 @@ export default function SpinWheel({
     if (isSpinning || entries.length === 0) return;
 
     let lastTime = performance.now();
-    const idleSpeed = 0.0035;
+    const idleSpeed = 0.0035; // Adjust this value to make idle rotation faster or slower
 
     const stepIdle = (now: number) => {
       if (spinningRef.current) return;
       const dt = now - lastTime;
       lastTime = now;
 
+      // Increment rotation continuously (scale by ~60fps frame delta)
       rotationRef.current = (rotationRef.current + idleSpeed * (dt / 16.67)) % TWO_PI;
       render();
 
@@ -97,6 +98,7 @@ export default function SpinWheel({
   const spin = useCallback(() => {
     if (spinningRef.current || entries.length === 0) return;
 
+    // Stop idle animation immediately
     if (idleAnimRef.current) {
       cancelAnimationFrame(idleAnimRef.current);
     }
@@ -132,7 +134,7 @@ export default function SpinWheel({
       } else {
         rotationRef.current = ((rotationRef.current % TWO_PI) + TWO_PI) % TWO_PI;
         spinningRef.current = false;
-        setIsSpinning(false);
+        setIsSpinning(false); // Resumes idle spin loop
         audioEngine.stopTicker();
         onSpinComplete(winnerIndex, entries[winnerIndex]);
       }
@@ -153,8 +155,7 @@ export default function SpinWheel({
 
   return (
     <div className="relative z-10 flex flex-col items-center justify-center w-full h-full">
-      {/* Slightly reduced max-w size so it clears the top wordings */}
-      <div className="relative z-10 w-full max-w-[min(76vh,800px)] aspect-square">
+      <div className="relative z-10 w-full max-w-[min(86vh,820px)] aspect-square">
         <canvas
           ref={canvasRef}
           onClick={handleClick}
