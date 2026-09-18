@@ -56,18 +56,18 @@ export async function loadAsset(key: string): Promise<string | null> {
     });
     db.close();
 
-    // Auto-seed default assets if missing from IndexedDB
+    // Auto-seed default assets using exact filenames from your project folder
     if (!result) {
       if (key === 'customLogo') {
         try {
-          result = await urlToDataUrl('/images/logo.png');
+          result = await urlToDataUrl('/images/LOGO.png');
           await saveAsset('customLogo', result);
         } catch (e) {
           console.error('Failed to auto-seed default logo', e);
         }
       } else if (key === 'customBg') {
         try {
-          result = await urlToDataUrl('/images/bg.png');
+          result = await urlToDataUrl('/images/BACKGROUND.png');
           await saveAsset('customBg', result);
         } catch (e) {
           console.error('Failed to auto-seed default background', e);
@@ -126,13 +126,13 @@ export interface PersistedSettings {
 
 export const defaultSettings: PersistedSettings = {
   spinDuration: 6,
-  tickerVolume: 1.0, // Increased default volume
-  celebrationVolume: 1.0, // Increased default volume
+  tickerVolume: 1.0,
+  celebrationVolume: 1.0,
   muted: false,
   autoRemoveWinner: true,
   hasCustomLogo: true,
   hasCustomBg: true,
-  useCustomBg: true, // Default to using custom background
+  useCustomBg: true,
   hasCustomVictoryAudio: false,
   title: 'Onaghosham Lucky Draw',
   eventTitle: 'Onaghosham Lucky Draw',
