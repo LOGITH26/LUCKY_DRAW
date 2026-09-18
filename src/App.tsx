@@ -18,26 +18,17 @@ import { ONAM_PALETTE } from '@/lib/colors';
 import {
   loadSettings,
   saveSettings,
-  saveAsset,
   loadAsset,
   defaultSettings,
 } from '@/lib/storage';
 
+// Direct imports for permanent default assets
+import defaultLogoUrl from '/images/LOGO.png';
+import defaultBgUrl from '/images/BACKGROUND.png';
+
 const DEFAULT_ENTRIES = Array.from({ length: 100 }, (_, i) => String(i + 1));
 const STORAGE_KEY_ENTRIES = 'jbma_wheel_entries';
 const STORAGE_KEY_HISTORY = 'jbma_wheel_history';
-
-// Helper to convert an image path to a base64 data URL
-async function urlToDataUrl(url: string): Promise<string> {
-  const response = await fetch(url);
-  const blob = await response.blob();
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onloadend = () => resolve(reader.result as string);
-    reader.onerror = reject;
-    reader.readAsDataURL(blob);
-  });
-}
 
 function App() {
   const [settings, setSettings] = useState<SettingsState>({
@@ -45,8 +36,8 @@ function App() {
     tickerVolume: 1.0,
     celebrationVolume: 1.0,
     autoRemoveWinner: defaultSettings.autoRemoveWinner,
-    customLogo: null,
-    customBg: null,
+    customLogo: defaultLogoUrl,
+    customBg: defaultBgUrl,
     useCustomBg: true,
     customVictoryAudio: null,
     palette: ONAM_PALETTE,
@@ -129,28 +120,8 @@ function App() {
   useEffect(() => {
     const init = async () => {
       const persisted = loadSettings();
-      let logo = await loadAsset('customLogo');
-      let bg = await loadAsset('customBg');
-      
-      // Fallback direct load if storage helper missed it
-      if (!logo) {
-        try {
-          logo = await urlToDataUrl('/images/LOGO.png');
-          await saveAsset('customLogo', logo);
-        } catch (err) {
-          console.error('Failed to load default logo', err);
-        }
-      }
-
-      if (!bg) {
-        try {
-          bg = await urlToDataUrl('/images/BACKGROUND.png');
-          await saveAsset('customBg', bg);
-        } catch (err) {
-          console.error('Failed to load default bg', err);
-        }
-      }
-
+      const storedLogo = await loadAsset('customLogo');
+      const storedBg = await loadAsset('customBg');
       const victoryAudio = await loadAsset('customVictoryAudio');
 
       const loaded: SettingsState = {
@@ -159,9 +130,9 @@ function App() {
         tickerVolume: persisted.tickerVolume ?? 1.0,
         celebrationVolume: persisted.celebrationVolume ?? 1.0,
         autoRemoveWinner: persisted.autoRemoveWinner,
-        customLogo: logo,
-        customBg: bg,
-        useCustomBg: persisted.useCustomBg ?? true,
+        customLogo: storedLogo || defaultLogoUrl,
+        customBg: storedBg || defaultBgUrl,
+        useCustomBg: true,
         customVictoryAudio: victoryAudio,
         eventTitle: persisted.eventTitle || 'Onaghosham Lucky Draw',
         eventSubtitle: persisted.eventSubtitle || defaultSettings.eventSubtitle,
@@ -213,18 +184,11 @@ function App() {
   }, [settings, muted]);
 
   useEffect(() => {
-    if (settings.customLogo) saveAsset('customLogo', settings.customLogo);
-  }, [settings.customLogo]);
-
-  useEffect(() => {
-    if (settings.customBg) saveAsset('customBg', settings.customBg);
-  }, [settings.customBg]);
-
-  useEffect(() => {
-    if (settings.customLogo) {
+    const activeLogo = settings.customLogo || defaultLogoUrl;
+    if (activeLogo) {
       const img = new Image();
       img.onload = () => setLogoImage(img);
-      img.src = settings.customLogo;
+      img.src = activeLogo;
     } else {
       setLogoImage(null);
     }
@@ -326,7 +290,7 @@ function App() {
   return (
     <div className="min-h-screen flex flex-col overflow-hidden font-sans text-gray-900">
       <OnamBackground
-        customBg={settings.useCustomBg ? settings.customBg : null}
+        customBg={settings.useCustomBg ? (settings.customBg || defaultBgUrl) : null}
         vignette={settings.vignette}
       />
       <CornerEmbellishments
