@@ -33,16 +33,48 @@ export async function saveAsset(key: string, data: string): Promise<void> {
   }
 }
 
+// Helper to convert public asset URL to base64 data URL
+async function urlToDataUrl(url: string): Promise<string> {
+  const response = await fetch(url);
+  const blob = await response.blob();
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
 export async function loadAsset(key: string): Promise<string | null> {
   try {
     const db = await openDB();
-    const result = await new Promise<string | null>((resolve, reject) => {
+    let result = await new Promise<string | null>((resolve, reject) => {
       const tx = db.transaction(STORE, 'readonly');
       const r = tx.objectStore(STORE).get(key);
       r.onsuccess = () => resolve((r.result as string) ?? null);
       r.onerror = () => reject(r.error);
     });
     db.close();
+
+    // Auto-seed default assets if missing from IndexedDB
+    if (!result) {
+      if (key === 'customLogo') {
+        try {
+          result = await urlToDataUrl('/images/logo.png');
+          await saveAsset('customLogo', result);
+        } catch (e) {
+          console.error('Failed to auto-seed default logo', e);
+        }
+      } else if (key === 'customBg') {
+        try {
+          result = await urlToDataUrl('/images/bg.png');
+          await saveAsset('customBg', result);
+        } catch (e) {
+          console.error('Failed to auto-seed default background', e);
+        }
+      }
+    }
+
     return result;
   } catch {
     return null;
@@ -94,16 +126,16 @@ export interface PersistedSettings {
 
 export const defaultSettings: PersistedSettings = {
   spinDuration: 6,
-  tickerVolume: 0.5,
-  celebrationVolume: 0.7,
+  tickerVolume: 1.0, // Increased default volume
+  celebrationVolume: 1.0, // Increased default volume
   muted: false,
   autoRemoveWinner: true,
-  hasCustomLogo: false,
-  hasCustomBg: false,
-  useCustomBg: false,
+  hasCustomLogo: true,
+  hasCustomBg: true,
+  useCustomBg: true, // Default to using custom background
   hasCustomVictoryAudio: false,
-  title: 'Onam Lucky Draw',
-  eventTitle: 'Onam Lucky Draw',
+  title: 'Onaghosham Lucky Draw',
+  eventTitle: 'Onaghosham Lucky Draw',
   eventSubtitle: 'Spin the Wheel',
   sliceFont: 'system',
   winnerFont: 'bold-sans',
