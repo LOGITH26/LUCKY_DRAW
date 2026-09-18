@@ -27,7 +27,7 @@ const DEFAULT_ENTRIES = Array.from({ length: 100 }, (_, i) => String(i + 1));
 const STORAGE_KEY_ENTRIES = 'jbma_wheel_entries';
 const STORAGE_KEY_HISTORY = 'jbma_wheel_history';
 
-// Helper to convert an image path to a base64 data URL so it can be stored persistently in localStorage/IndexedDB
+// Helper to convert an image path to a base64 data URL
 async function urlToDataUrl(url: string): Promise<string> {
   const response = await fetch(url);
   const blob = await response.blob();
@@ -42,16 +42,16 @@ async function urlToDataUrl(url: string): Promise<string> {
 function App() {
   const [settings, setSettings] = useState<SettingsState>({
     spinDuration: defaultSettings.spinDuration,
-    tickerVolume: 1.0, // Increased default ticker volume
-    celebrationVolume: 1.0, // Increased default celebration volume
+    tickerVolume: 1.0,
+    celebrationVolume: 1.0,
     autoRemoveWinner: defaultSettings.autoRemoveWinner,
     customLogo: null,
     customBg: null,
-    useCustomBg: true, // Enabled default custom background flag
+    useCustomBg: true,
     customVictoryAudio: null,
     palette: ONAM_PALETTE,
     paletteName: 'Onam Festive',
-    eventTitle: 'Onaghosham Lucky Draw', // Updated default title
+    eventTitle: 'Onaghosham Lucky Draw',
     eventSubtitle: defaultSettings.eventSubtitle,
     titleTheme: 'gold',
     titleCustomColor: '#F59E0B',
@@ -70,49 +70,34 @@ function App() {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [editingTitle, setEditingTitle] = useState(false);
 
-  // Initialize entries from localStorage so refresh won't reset them
   const [entries, setEntries] = useState<string[]>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY_ENTRIES);
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed;
-        }
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
       }
     } catch (e) {
-      console.error('Failed to load entries from localStorage', e);
+      console.error('Failed to load entries', e);
     }
     return DEFAULT_ENTRIES;
   });
 
-  // Initialize history from localStorage
   const [history, setHistory] = useState<WinnerRecord[]>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY_HISTORY);
       return saved ? JSON.parse(saved) : [];
     } catch (e) {
-      console.error('Failed to load history from localStorage', e);
       return [];
     }
   });
 
-  // Persist entries on every update
   useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY_ENTRIES, JSON.stringify(entries));
-    } catch (e) {
-      console.error('Failed to save entries to localStorage', e);
-    }
+    localStorage.setItem(STORAGE_KEY_ENTRIES, JSON.stringify(entries));
   }, [entries]);
 
-  // Persist history on every update
   useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
-    } catch (e) {
-      console.error('Failed to save history to localStorage', e);
-    }
+    localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
   }, [history]);
 
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -120,7 +105,6 @@ function App() {
   const [rangeOpen, setRangeOpen] = useState(false);
   const [winner, setWinner] = useState<{ name: string; index: number } | null>(null);
 
-  // Undo snapshot: stores the state right before the most recent spin completed
   const [undoSnapshot, setUndoSnapshot] = useState<{
     entries: string[];
     history: WinnerRecord[];
@@ -133,7 +117,6 @@ function App() {
   }
   const audioEngine = audioEngineRef.current;
 
-  // Refs to read current entries/history/winner inside callbacks without stale closures
   const entriesRef = useRef(entries);
   const historyRef = useRef(history);
   const winnerRef = useRef(winner);
@@ -149,23 +132,22 @@ function App() {
       let logo = await loadAsset('customLogo');
       let bg = await loadAsset('customBg');
       
-      // If no custom logo is saved yet, set the default logo automatically
+      // Fallback direct load if storage helper missed it
       if (!logo) {
         try {
-          logo = await urlToDataUrl('/images/logo.png');
+          logo = await urlToDataUrl('/images/LOGO.png');
           await saveAsset('customLogo', logo);
         } catch (err) {
-          console.error('Failed to load default logo asset', err);
+          console.error('Failed to load default logo', err);
         }
       }
 
-      // If no custom background is saved yet, set the default background automatically
       if (!bg) {
         try {
-          bg = await urlToDataUrl('/images/bg.png');
+          bg = await urlToDataUrl('/images/BACKGROUND.png');
           await saveAsset('customBg', bg);
         } catch (err) {
-          console.error('Failed to load default background asset', err);
+          console.error('Failed to load default bg', err);
         }
       }
 
@@ -200,7 +182,6 @@ function App() {
       audioEngine.setMuted(persisted.muted);
     };
     init();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -240,10 +221,6 @@ function App() {
   }, [settings.customBg]);
 
   useEffect(() => {
-    if (settings.customVictoryAudio) saveAsset('customVictoryAudio', settings.customVictoryAudio);
-  }, [settings.customVictoryAudio]);
-
-  useEffect(() => {
     if (settings.customLogo) {
       const img = new Image();
       img.onload = () => setLogoImage(img);
@@ -261,7 +238,6 @@ function App() {
 
   const handleSpinComplete = useCallback(
     (winnerIndex: number, winnerName: string) => {
-      // Save snapshot for undo before any state mutations
       setUndoSnapshot({
         entries: entriesRef.current,
         history: historyRef.current,
@@ -291,9 +267,6 @@ function App() {
   );
 
   const handleRemoveWinner = () => {
-    if (winner) {
-      setEntries((prev) => prev.filter((_, i) => i !== winner.index));
-    }
     setWinner(null);
   };
 
@@ -342,87 +315,8 @@ function App() {
         await navigator.share(shareData);
       } else {
         await navigator.clipboard.writeText(window.location.href);
-        const btn = document.createElement('div');
-        btn.textContent = 'Link copied to clipboard!';
-        btn.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-xl bg-amber-600 text-white font-medium shadow-lg animate-[fadeIn_0.2s_ease]';
-        document.body.appendChild(btn);
-        setTimeout(() => btn.remove(), 2000);
       }
-    } catch {
-      // user cancelled or clipboard unavailable
-    }
-  };
-
-  useEffect(() => {
-    const handleKey = (e: KeyboardEvent) => {
-      const target = e.target as HTMLElement;
-      const isTyping =
-        target.tagName === 'INPUT' ||
-        target.tagName === 'TEXTAREA' ||
-        target.isContentEditable;
-
-      if (e.code === 'Space') {
-        if (winner) {
-          e.preventDefault();
-          handleKeepWinner();
-        } else if (editingTitle) {
-          // Let spaces type into the title input
-        } else if (!isTyping && !settingsOpen && !rangeOpen) {
-          e.preventDefault();
-          window.dispatchEvent(new CustomEvent('wheel-spin'));
-        }
-      } else if (e.key === 'f' || e.key === 'F') {
-        if (!isTyping) {
-          e.preventDefault();
-          toggleFullscreen();
-        }
-      } else if (e.key === 's' || e.key === 'S') {
-        if (!isTyping) {
-          e.preventDefault();
-          setSettingsTab(0);
-          setSettingsOpen(true);
-        }
-      } else if (e.key === 'Enter') {
-        if (winner) {
-          e.preventDefault();
-          handleKeepWinner();
-        }
-      } else if (e.key === 'Escape') {
-        if (editingTitle) setEditingTitle(false);
-        if (settingsOpen) setSettingsOpen(false);
-        if (rangeOpen) setRangeOpen(false);
-      }
-    };
-
-    window.addEventListener('keydown', handleKey);
-    return () => window.removeEventListener('keydown', handleKey);
-  }, [winner, settingsOpen, rangeOpen, settings.autoRemoveWinner, editingTitle]);
-
-  const handleSettingsChange = (newState: SettingsState) => {
-    setSettings(newState);
-  };
-
-  const openDesignTab = () => {
-    setSettingsTab(2);
-    setSettingsOpen(true);
-  };
-
-  const openStageTab = () => {
-    setSettingsTab(3);
-    setSettingsOpen(true);
-  };
-
-  const handlePopulateRange = (newEntries: string[]) => {
-    setEntries(newEntries);
-  };
-
-  const handleClearHistory = () => {
-    setHistory([]);
-    try {
-      localStorage.removeItem(STORAGE_KEY_HISTORY);
-    } catch (e) {
-      console.error('Failed to clear history from localStorage', e);
-    }
+    } catch {}
   };
 
   const headerFontCss = FONT_CSS[settings.headerFont] || 'inherit';
@@ -442,7 +336,6 @@ function App() {
         fullscreen={isFullscreen}
       />
 
-      {/* Top nav — hidden in fullscreen for a clean wheel-only view */}
       {!isFullscreen && (
         <TopNav
           muted={muted}
@@ -453,15 +346,13 @@ function App() {
           onToggleMute={toggleMute}
           onToggleFullscreen={toggleFullscreen}
           onOpenSettings={() => { setSettingsTab(0); setSettingsOpen(true); }}
-          onOpenDesign={openDesignTab}
-          onOpenStage={openStageTab}
+          onOpenDesign={() => { setSettingsTab(2); setSettingsOpen(true); }}
+          onOpenStage={() => { setSettingsTab(3); setSettingsOpen(true); }}
           onShare={handleShare}
         />
       )}
 
-      {/* Main content */}
       <main className={`relative z-10 flex-1 flex flex-col lg:flex-row gap-4 lg:gap-6 overflow-hidden ${isFullscreen ? 'p-0' : 'p-4 sm:p-6 lg:p-8'}`}>
-        {/* Left: Wheel stage - slightly reduced max container size so it doesn't overlap header/wordings */}
         <div className={`flex-1 flex items-center justify-center min-h-0 scale-95 origin-center ${isFullscreen ? 'pt-16 sm:pt-20 pb-16' : 'pb-20'}`}>
           <SpinWheel
             entries={entries}
@@ -478,14 +369,13 @@ function App() {
           />
         </div>
 
-        {/* Right: Entries/Results panel — hidden in fullscreen */}
         {!isFullscreen && (
           <div className="w-full lg:w-[380px] lg:shrink-0 h-[50vh] lg:h-auto lg:max-h-[calc(100vh-100px)]">
             <EntriesPanel
               entries={entries}
               onEntriesChange={setEntries}
               history={history}
-              onClearHistory={handleClearHistory}
+              onClearHistory={() => setHistory([])}
               onOpenRangeModal={() => setRangeOpen(true)}
               canUndo={!!undoSnapshot}
               onUndo={handleUndo}
@@ -494,93 +384,31 @@ function App() {
         )}
       </main>
 
-      {/* Fullscreen overlay — solid red pill title bar with enhanced contrast subtitle */}
       {isFullscreen && (
-        <>
-          {/* Title + subtitle bar */}
-          <div className="fixed top-0 left-0 right-0 z-30 flex flex-col items-center justify-center px-20 py-3 pointer-events-none gap-0.5">
-            {editingTitle ? (
-              <input
-                autoFocus
-                value={settings.eventTitle}
-                onChange={(e) => setSettings((s) => ({ ...s, eventTitle: e.target.value }))}
-                onBlur={() => setEditingTitle(false)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') setEditingTitle(false);
-                }}
-                className="pointer-events-auto text-center text-2xl sm:text-3xl font-extrabold bg-gradient-to-b from-[#b91c1c] to-[#7f1d1d] rounded-2xl px-6 py-2 outline-none border-2 border-amber-400 shadow-[0_6px_20px_rgba(0,0,0,0.6)] transition-all max-w-[80vw]"
-                style={{
-                  fontFamily: headerFontCss,
-                  color: currentTheme === 'custom' ? settings.titleCustomColor : '#FDE68A',
-                }}
-                placeholder="Enter title..."
-              />
-            ) : (
-              <button
-                onClick={() => setEditingTitle(true)}
-                className="pointer-events-auto group flex items-center gap-2 text-2xl sm:text-4xl font-black bg-gradient-to-b from-[#b91c1c] via-[#991b1b] to-[#7f1d1d] hover:from-[#dc2626] hover:to-[#991b1b] rounded-2xl px-8 py-2.5 border-2 border-amber-400/80 shadow-[0_8px_25px_rgba(127,29,29,0.7),inset_0_1px_2px_rgba(255,255,255,0.35)] transition-all active:scale-95"
-                style={{ fontFamily: headerFontCss }}
-              >
-                <span
-                  className={`truncate max-w-[60vw] tracking-wider filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] ${
-                    currentTheme === 'custom'
-                      ? ''
-                      : `bg-gradient-to-b ${themeGradient} bg-clip-text text-transparent`
-                  }`}
-                  style={currentTheme === 'custom' ? { color: settings.titleCustomColor } : undefined}
-                >
-                  {settings.eventTitle}
-                </span>
-                <Pencil className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity text-amber-200 shrink-0" />
-              </button>
-            )}
-
-            {/* Subtitle with deep maroon text, enhanced spacing & shadow */}
-            {settings.eventSubtitle && (
-              <span
-                className="pointer-events-auto mt-2 text-sm sm:text-base font-black tracking-[0.25em] uppercase text-[#7f1d1d] drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)]"
-                style={{ fontFamily: headerFontCss }}
-              >
-                {settings.eventSubtitle}
-              </span>
-            )}
-          </div>
-
-          {/* Mute & exit buttons */}
-          <div className="fixed top-4 right-4 z-40 flex gap-2">
-            {undoSnapshot && (
-              <button
-                onClick={handleUndo}
-                className="px-3 py-2.5 rounded-lg bg-amber-600/90 text-white hover:bg-amber-500 transition-all backdrop-blur-sm flex items-center gap-1.5 font-medium text-sm"
-                aria-label="Undo last spin"
-              >
-                <Undo2 className="w-4 h-4" /> Undo
-              </button>
-            )}
-            <button
-              onClick={toggleMute}
-              className="p-2.5 rounded-lg bg-black/40 text-white hover:bg-black/60 transition-all backdrop-blur-sm"
-              aria-label="Toggle mute"
+        <div className="fixed top-0 left-0 right-0 z-30 flex flex-col items-center justify-center px-20 py-3 pointer-events-none gap-0.5">
+          <button
+            onClick={() => setEditingTitle(true)}
+            className="pointer-events-auto group flex items-center gap-2 text-2xl sm:text-4xl font-black bg-gradient-to-b from-[#b91c1c] via-[#991b1b] to-[#7f1d1d] rounded-2xl px-8 py-2.5 border-2 border-amber-400/80 shadow-[0_8px_25px_rgba(127,29,29,0.7)]"
+            style={{ fontFamily: headerFontCss }}
+          >
+            <span
+              className={`truncate max-w-[60vw] tracking-wider ${
+                currentTheme === 'custom' ? '' : `bg-gradient-to-b ${themeGradient} bg-clip-text text-transparent`
+              }`}
+              style={currentTheme === 'custom' ? { color: settings.titleCustomColor } : undefined}
             >
-              {muted ? 'Unmute' : 'Mute'}
-            </button>
-            <button
-              onClick={toggleFullscreen}
-              className="p-2.5 rounded-lg bg-black/40 text-white hover:bg-black/60 transition-all backdrop-blur-sm"
-              aria-label="Exit fullscreen"
-            >
-              Exit
-            </button>
-          </div>
-        </>
+              {settings.eventTitle}
+            </span>
+            <Pencil className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity text-amber-200 shrink-0" />
+          </button>
+        </div>
       )}
 
-      {/* Modals */}
       <SettingsModal
         open={settingsOpen}
         initialTab={settingsTab}
         state={settings}
-        onChange={handleSettingsChange}
+        onChange={setSettings}
         onClose={() => setSettingsOpen(false)}
         audioEngine={audioEngine}
       />
@@ -599,7 +427,7 @@ function App() {
       <RangeModal
         open={rangeOpen}
         onClose={() => setRangeOpen(false)}
-        onPopulate={handlePopulateRange}
+        onPopulate={setEntries}
       />
     </div>
   );
