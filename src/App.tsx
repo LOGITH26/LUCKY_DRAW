@@ -22,9 +22,9 @@ import {
   defaultSettings,
 } from '@/lib/storage';
 
-// Direct imports for permanent default assets
-import defaultLogoUrl from '/images/LOGO.png';
-import defaultBgUrl from '/images/BACKGROUND.png';
+// Direct imports pointing to public/assets/images/
+import defaultLogoUrl from '/assets/images/LOGO.png';
+import defaultBgUrl from '/assets/images/BACKGROUND.png';
 
 const DEFAULT_ENTRIES = Array.from({ length: 100 }, (_, i) => String(i + 1));
 const STORAGE_KEY_ENTRIES = 'jbma_wheel_entries';
