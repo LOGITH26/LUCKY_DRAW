@@ -37,25 +37,18 @@ export interface SettingsState {
   customVictoryAudio: string | null;
   palette: string[];
   paletteName: string;
-  // Event text
   eventTitle: string;
   eventSubtitle: string;
-  // Title colors
   titleTheme?: TitleColorTheme;
   titleCustomColor?: string;
-  // Fonts
   sliceFont: FontFamily;
   winnerFont: FontFamily;
   headerFont: FontFamily;
-  // Wheel border
   borderStyle: BorderStyle;
-  // Corner embellishments
   cornerLeaves: boolean;
   cornerLamps: boolean;
   cornerGarlands: boolean;
-  // Vignette
-  vignette: number; // 0..1
-  // Confetti
+  vignette: number;
   confettiStyle: ConfettiStyle;
 }
 
@@ -86,34 +79,13 @@ export const FONT_OPTIONS: { value: FontFamily; label: string; css: string }[] =
 ];
 
 export const TITLE_COLOR_THEMES: Record<TitleColorTheme, { label: string; gradient: string }> = {
-  gold: {
-    label: 'Metallic Gold',
-    gradient: 'from-[#FFF6CC] via-[#F5D061] to-[#A37010]',
-  },
-  silver: {
-    label: 'Metallic Silver / Chrome',
-    gradient: 'from-[#FFFFFF] via-[#D1D5DB] to-[#6B7280]',
-  },
-  bronze: {
-    label: 'Metallic Bronze / Rose Gold',
-    gradient: 'from-[#FFE4D6] via-[#E0A985] to-[#8C4A2F]',
-  },
-  ruby: {
-    label: 'Ruby Festive',
-    gradient: 'from-[#FFE4E6] via-[#F43F5E] to-[#9F1239]',
-  },
-  emerald: {
-    label: 'Emerald Jewel',
-    gradient: 'from-[#D1FAE5] via-[#10B981] to-[#065F46]',
-  },
-  white: {
-    label: 'Pure Crisp White',
-    gradient: 'from-[#FFFFFF] via-[#F9FAFB] to-[#E5E7EB]',
-  },
-  custom: {
-    label: 'Custom Solid Color',
-    gradient: '',
-  },
+  gold: { label: 'Metallic Gold', gradient: 'from-[#FFF6CC] via-[#F5D061] to-[#A37010]' },
+  silver: { label: 'Metallic Silver / Chrome', gradient: 'from-[#FFFFFF] via-[#D1D5DB] to-[#6B7280]' },
+  bronze: { label: 'Metallic Bronze / Rose Gold', gradient: 'from-[#FFE4D6] via-[#E0A985] to-[#8C4A2F]' },
+  ruby: { label: 'Ruby Festive', gradient: 'from-[#FFE4E6] via-[#F43F5E] to-[#9F1239]' },
+  emerald: { label: 'Emerald Jewel', gradient: 'from-[#D1FAE5] via-[#10B981] to-[#065F46]' },
+  white: { label: 'Pure Crisp White', gradient: 'from-[#FFFFFF] via-[#F9FAFB] to-[#E5E7EB]' },
+  custom: { label: 'Custom Solid Color', gradient: '' },
 };
 
 const BORDER_OPTIONS: { value: BorderStyle; label: string; desc: string }[] = [
@@ -270,11 +242,6 @@ export default function SettingsModal({
                   onChange={(e) => update({ tickerVolume: parseFloat(e.target.value) })}
                   className="w-full accent-amber-600"
                 />
-                <div className="flex justify-between text-xs text-amber-700/50 mt-1">
-                  <span>Off</span>
-                  <span>{Math.round(state.tickerVolume * 100)}%</span>
-                  <span>Max</span>
-                </div>
               </div>
 
               <div>
@@ -290,17 +257,6 @@ export default function SettingsModal({
                   onChange={(e) => update({ spinDuration: parseFloat(e.target.value) })}
                   className="w-full accent-amber-600"
                 />
-                <div className="flex justify-between text-xs text-amber-700/50 mt-1">
-                  <span>1s</span>
-                  <span>20s</span>
-                </div>
-              </div>
-
-              <div className="rounded-xl bg-amber-100/60 border border-amber-300/40 p-4">
-                <p className="text-sm text-amber-800">
-                  A mechanical ticker click plays during the spin using the Web Audio API.
-                  Adjust the volume and spin duration above.
-                </p>
               </div>
             </div>
           )}
@@ -320,30 +276,22 @@ export default function SettingsModal({
                   onChange={(e) => update({ celebrationVolume: parseFloat(e.target.value) })}
                   className="w-full accent-amber-600"
                 />
-                <div className="flex justify-between text-xs text-amber-700/50 mt-1">
-                  <span>Off</span>
-                  <span>{Math.round(state.celebrationVolume * 100)}%</span>
-                  <span>Max</span>
-                </div>
               </div>
 
               <div>
                 <label className="flex items-center gap-2 text-sm font-semibold text-amber-900 mb-2">
                   <Music className="w-4 h-4" /> Default Celebration Sound
                 </label>
-                <p className="text-xs text-amber-700/60 mb-3">
-                  Built-in Chenda drum roll + fanfare plays on win (unless custom audio is uploaded).
-                </p>
                 <div className="flex gap-2">
                   <button
                     onClick={previewVictory}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-600 text-white text-sm font-medium hover:bg-amber-700 transition-colors active:scale-95"
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-600 text-white text-sm font-medium hover:bg-amber-700 transition-colors"
                   >
                     <Play className="w-4 h-4" /> Preview
                   </button>
                   <button
                     onClick={stopPreview}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-300 transition-colors active:scale-95"
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-300 transition-colors"
                   >
                     <Square className="w-4 h-4" /> Stop
                   </button>
@@ -352,35 +300,25 @@ export default function SettingsModal({
 
               <div className="border-t border-amber-300/40 pt-5">
                 <label className="flex items-center gap-2 text-sm font-semibold text-amber-900 mb-2">
-                  <Upload className="w-4 h-4" /> Custom Victory Audio
+                  <Upload className="w-4 h-4" /> Custom Victory Audio (.mp3/.wav)
                 </label>
-                <p className="text-xs text-amber-700/60 mb-3">
-                  Upload your own .mp3 or .wav file to play instead of the default fanfare.
-                </p>
                 <input
                   type="file"
                   accept="audio/*"
                   onChange={(e) => handleVictoryAudioUpload(e.target.files?.[0])}
-                  className="block w-full text-sm text-amber-800 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-amber-600 file:text-white hover:file:bg-amber-700 file:cursor-pointer cursor-pointer"
+                  className="block w-full text-sm text-amber-800 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-amber-600 file:text-white hover:file:bg-amber-700 cursor-pointer"
                 />
                 {state.customVictoryAudio && (
-                  <div className="mt-3 flex items-center gap-2 rounded-lg bg-green-50 border border-green-300/40 px-3 py-2">
-                    <Music className="w-4 h-4 text-green-700" />
-                    <span className="text-sm text-green-800 flex-1 truncate">Custom audio uploaded</span>
-                    <button
-                      onClick={() => update({ customVictoryAudio: null })}
-                      className="text-xs text-red-600 hover:text-red-700 font-medium"
-                    >
-                      Remove
-                    </button>
-                  </div>
+                  <button
+                    onClick={() => update({ customVictoryAudio: null })}
+                    className="mt-2 text-xs text-red-600 hover:text-red-700 font-medium"
+                  >
+                    Remove custom audio
+                  </button>
                 )}
               </div>
 
               <div className="border-t border-amber-300/40 pt-5">
-                <label className="flex items-center gap-2 text-sm font-semibold text-amber-900 mb-3">
-                  <PartyPopper className="w-4 h-4" /> Auto-Remove Winner
-                </label>
                 <label className="flex items-center gap-3 cursor-pointer">
                   <input
                     type="checkbox"
@@ -393,100 +331,69 @@ export default function SettingsModal({
                   </span>
                 </label>
               </div>
-
-              {/* Confetti style */}
-              <div className="border-t border-amber-300/40 pt-5">
-                <label className="flex items-center gap-2 text-sm font-semibold text-amber-900 mb-3">
-                  <Sparkles className="w-4 h-4" /> Confetti Style
-                </label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {CONFETTI_OPTIONS.map((opt) => (
-                    <button
-                      key={opt.value}
-                      onClick={() => update({ confettiStyle: opt.value })}
-                      className={`rounded-xl border-2 px-3 py-2.5 text-left transition-all duration-200 ${
-                        state.confettiStyle === opt.value
-                          ? 'border-amber-500 bg-amber-100 shadow-md'
-                          : 'border-amber-200/40 hover:border-amber-400 hover:bg-amber-50'
-                      }`}
-                    >
-                      <div className="text-sm font-semibold text-amber-900">{opt.label}</div>
-                      <div className="text-xs text-amber-700/50">{opt.desc}</div>
-                    </button>
-                  ))}
-                </div>
-              </div>
             </div>
           )}
 
           {tab === 'design' && (
             <div className="space-y-6">
-              {/* Center logo */}
+              {/* Center logo option */}
               <div>
                 <label className="flex items-center gap-2 text-sm font-semibold text-amber-900 mb-2">
-                  <Image className="w-4 h-4" /> Center Logo
+                  <Image className="w-4 h-4" /> Wheel Center Logo Option
                 </label>
                 <p className="text-xs text-amber-700/60 mb-3">
-                  Upload a PNG/JPG to display in the wheel's center hub. Leave empty for default Onam motif.
+                  Upload a custom image to display in the center hub of the spin wheel.
                 </p>
                 <input
                   type="file"
                   accept="image/png,image/jpeg,image/jpg"
                   onChange={(e) => handleLogoUpload(e.target.files?.[0])}
-                  className="block w-full text-sm text-amber-800 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-amber-600 file:text-white hover:file:bg-amber-700 file:cursor-pointer cursor-pointer"
+                  className="block w-full text-sm text-amber-800 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-amber-600 file:text-white hover:file:bg-amber-700 cursor-pointer"
                 />
-                <div className="mt-3 flex items-center gap-3">
-                  {state.customLogo ? (
-                    <>
-                      <div
-                        className="w-16 h-16 rounded-full bg-cover bg-center border-2 border-amber-400 shadow-md shrink-0"
-                        style={{ backgroundImage: `url(${state.customLogo})` }}
-                      />
-                      <button
-                        onClick={() => update({ customLogo: null })}
-                        className="text-xs text-red-600 hover:text-red-700 font-medium"
-                      >
-                        Remove logo
-                      </button>
-                    </>
-                  ) : (
-                    <span className="text-xs text-amber-700/60 italic">Using default Onam logo motif</span>
-                  )}
-                </div>
+                {state.customLogo && (
+                  <div className="mt-3 flex items-center gap-3">
+                    <div
+                      className="w-16 h-16 rounded-full bg-cover bg-center border-2 border-amber-400 shadow-md shrink-0"
+                      style={{ backgroundImage: `url(${state.customLogo})` }}
+                    />
+                    <button
+                      onClick={() => update({ customLogo: null })}
+                      className="text-xs text-red-600 hover:text-red-700 font-medium"
+                    >
+                      Remove custom logo
+                    </button>
+                  </div>
+                )}
               </div>
 
-              {/* Background */}
+              {/* Background option */}
               <div className="border-t border-amber-300/40 pt-5">
                 <label className="flex items-center gap-2 text-sm font-semibold text-amber-900 mb-2">
-                  <Image className="w-4 h-4" /> Background
+                  <Image className="w-4 h-4" /> Background Option
                 </label>
                 <p className="text-xs text-amber-700/60 mb-3">
-                  Upload a custom background image, or use the festive Onam preset.
+                  Upload a custom background image for your stage/app view.
                 </p>
                 <input
                   type="file"
                   accept="image/png,image/jpeg,image/jpg"
                   onChange={(e) => handleBgUpload(e.target.files?.[0])}
-                  className="block w-full text-sm text-amber-800 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-amber-600 file:text-white hover:file:bg-amber-700 file:cursor-pointer cursor-pointer"
+                  className="block w-full text-sm text-amber-800 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-amber-600 file:text-white hover:file:bg-amber-700 cursor-pointer"
                 />
-                <div className="mt-3 flex items-center gap-3">
-                  {state.customBg ? (
-                    <>
-                      <div
-                        className="w-24 h-16 rounded-lg bg-cover bg-center border-2 border-amber-400 shadow-md shrink-0"
-                        style={{ backgroundImage: `url(${state.customBg})` }}
-                      />
-                      <button
-                        onClick={() => update({ customBg: null, useCustomBg: false })}
-                        className="text-xs text-red-600 hover:text-red-700 font-medium"
-                      >
-                        Remove & use preset
-                      </button>
-                    </>
-                  ) : (
-                    <span className="text-xs text-amber-700/60 italic">Using default background theme</span>
-                  )}
-                </div>
+                {state.customBg && (
+                  <div className="mt-3 flex items-center gap-3">
+                    <div
+                      className="w-24 h-16 rounded-lg bg-cover bg-center border-2 border-amber-400 shadow-md shrink-0"
+                      style={{ backgroundImage: `url(${state.customBg})` }}
+                    />
+                    <button
+                      onClick={() => update({ customBg: null, useCustomBg: false })}
+                      className="text-xs text-red-600 hover:text-red-700 font-medium"
+                    >
+                      Remove custom background
+                    </button>
+                  </div>
+                )}
                 <label className="flex items-center gap-3 mt-3 cursor-pointer">
                   <input
                     type="checkbox"
@@ -552,64 +459,15 @@ export default function SettingsModal({
                   ))}
                 </div>
               </div>
-
-              {/* Font family */}
-              <div className="border-t border-amber-300/40 pt-5">
-                <label className="flex items-center gap-2 text-sm font-semibold text-amber-900 mb-3">
-                  <Type className="w-4 h-4" /> Font Selections
-                </label>
-                <div className="space-y-4">
-                  <div>
-                    <label className="text-xs text-amber-700/60 mb-1 block">Slice Numbers</label>
-                    <select
-                      value={state.sliceFont}
-                      onChange={(e) => update({ sliceFont: e.target.value as FontFamily })}
-                      className="w-full rounded-lg border border-amber-300/60 bg-white/70 px-3 py-2 text-sm text-amber-900 focus:outline-none focus:border-amber-500"
-                    >
-                      {FONT_OPTIONS.map((f) => (
-                        <option key={f.value} value={f.value}>{f.label}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="text-xs text-amber-700/60 mb-1 block">Winner Announcement</label>
-                    <select
-                      value={state.winnerFont}
-                      onChange={(e) => update({ winnerFont: e.target.value as FontFamily })}
-                      className="w-full rounded-lg border border-amber-300/60 bg-white/70 px-3 py-2 text-sm text-amber-900 focus:outline-none focus:border-amber-500"
-                    >
-                      {FONT_OPTIONS.map((f) => (
-                        <option key={f.value} value={f.value}>{f.label}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="text-xs text-amber-700/60 mb-1 block">Headers & Titles</label>
-                    <select
-                      value={state.headerFont}
-                      onChange={(e) => update({ headerFont: e.target.value as FontFamily })}
-                      className="w-full rounded-lg border border-amber-300/60 bg-white/70 px-3 py-2 text-sm text-amber-900 focus:outline-none focus:border-amber-500"
-                    >
-                      {FONT_OPTIONS.map((f) => (
-                        <option key={f.value} value={f.value}>{f.label}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-              </div>
             </div>
           )}
 
           {tab === 'stage' && (
             <div className="space-y-6">
-              {/* Event title & subtitle */}
               <div>
                 <label className="flex items-center gap-2 text-sm font-semibold text-amber-900 mb-3">
                   <Type className="w-4 h-4" /> Custom Event Header
                 </label>
-                <p className="text-xs text-amber-700/60 mb-3">
-                  Set your event name and category/round. This appears in the top bar and fullscreen title.
-                </p>
                 <div className="space-y-3">
                   <div>
                     <label className="text-xs text-amber-700/60 mb-1 block">Event Name</label>
@@ -617,7 +475,6 @@ export default function SettingsModal({
                       type="text"
                       value={state.eventTitle}
                       onChange={(e) => update({ eventTitle: e.target.value })}
-                      placeholder="e.g. Onaghosham 2026"
                       className="w-full rounded-lg border border-amber-300/60 bg-white/70 px-3 py-2 text-sm text-amber-900 focus:outline-none focus:border-amber-500"
                     />
                   </div>
@@ -627,108 +484,9 @@ export default function SettingsModal({
                       type="text"
                       value={state.eventSubtitle}
                       onChange={(e) => update({ eventSubtitle: e.target.value })}
-                      placeholder="e.g. Grand Prize Round"
                       className="w-full rounded-lg border border-amber-300/60 bg-white/70 px-3 py-2 text-sm text-amber-900 focus:outline-none focus:border-amber-500"
                     />
                   </div>
-                </div>
-              </div>
-
-              {/* Title color style & metallic finishes */}
-              <div className="border-t border-amber-300/40 pt-5">
-                <label className="flex items-center gap-2 text-sm font-semibold text-amber-900 mb-2">
-                  <Sparkles className="w-4 h-4" /> Title Color & Finish
-                </label>
-                <p className="text-xs text-amber-700/60 mb-3">
-                  Choose a metallic specular sheen or select your own custom color for the stage title.
-                </p>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                  {(Object.keys(TITLE_COLOR_THEMES) as TitleColorTheme[]).map((themeKey) => (
-                    <button
-                      key={themeKey}
-                      type="button"
-                      onClick={() => update({ titleTheme: themeKey })}
-                      className={`px-3 py-2 text-xs font-semibold rounded-lg border text-center transition-all ${
-                        (state.titleTheme || 'gold') === themeKey
-                          ? 'border-amber-600 bg-amber-500 text-white shadow-sm ring-2 ring-amber-300'
-                          : 'border-amber-200/60 bg-white/80 text-amber-900 hover:bg-amber-100/60'
-                      }`}
-                    >
-                      {TITLE_COLOR_THEMES[themeKey].label}
-                    </button>
-                  ))}
-                </div>
-
-                {state.titleTheme === 'custom' && (
-                  <div className="flex items-center gap-3 mt-3 p-2.5 rounded-xl bg-amber-100/70 border border-amber-300/60">
-                    <Pipette className="w-4 h-4 text-amber-800" />
-                    <input
-                      type="color"
-                      value={state.titleCustomColor || '#FFD700'}
-                      onChange={(e) => update({ titleCustomColor: e.target.value })}
-                      className="w-8 h-8 cursor-pointer rounded-lg border border-gray-300 bg-transparent"
-                    />
-                    <div className="flex flex-col">
-                      <span className="text-xs font-semibold text-amber-900">Custom Title Color</span>
-                      <span className="text-[11px] text-amber-700/70 font-mono uppercase">
-                        {state.titleCustomColor || '#FFD700'}
-                      </span>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Corner embellishments */}
-              <div className="border-t border-amber-300/40 pt-5">
-                <label className="flex items-center gap-2 text-sm font-semibold text-amber-900 mb-3">
-                  <Leaf className="w-4 h-4" /> Corner Embellishments
-                </label>
-                <p className="text-xs text-amber-700/60 mb-3">
-                  Toggle decorative corner assets on or off to fit different projector aspect ratios.
-                </p>
-                <div className="space-y-2.5">
-                  <ToggleRow
-                    icon={<Leaf className="w-4 h-4" />}
-                    label="Banana Leaves"
-                    checked={state.cornerLeaves}
-                    onChange={(v) => update({ cornerLeaves: v })}
-                  />
-                  <ToggleRow
-                    icon={<Lightbulb className="w-4 h-4" />}
-                    label="Nilavilakku Lamps"
-                    checked={state.cornerLamps}
-                    onChange={(v) => update({ cornerLamps: v })}
-                  />
-                  <ToggleRow
-                    icon={<Flower2 className="w-4 h-4" />}
-                    label="Floral Garlands"
-                    checked={state.cornerGarlands}
-                    onChange={(v) => update({ cornerGarlands: v })}
-                  />
-                </div>
-              </div>
-
-              {/* Vignette / ambient lighting */}
-              <div className="border-t border-amber-300/40 pt-5">
-                <label className="flex items-center gap-2 text-sm font-semibold text-amber-900 mb-3">
-                  <Sun className="w-4 h-4" /> Ambient Lighting / Vignette
-                </label>
-                <p className="text-xs text-amber-700/60 mb-3">
-                  Adjust the dark vignette behind the wheel so numbers pop on low-contrast projectors.
-                </p>
-                <input
-                  type="range"
-                  min={0}
-                  max={1}
-                  step={0.05}
-                  value={state.vignette}
-                  onChange={(e) => update({ vignette: parseFloat(e.target.value) })}
-                  className="w-full accent-amber-600"
-                />
-                <div className="flex justify-between text-xs text-amber-700/50 mt-1">
-                  <span>None</span>
-                  <span>{Math.round(state.vignette * 100)}%</span>
-                  <span>Max</span>
                 </div>
               </div>
             </div>
@@ -736,32 +494,5 @@ export default function SettingsModal({
         </div>
       </div>
     </div>
-  );
-}
-
-function ToggleRow({
-  icon,
-  label,
-  checked,
-  onChange,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  checked: boolean;
-  onChange: (v: boolean) => void;
-}) {
-  return (
-    <label className="flex items-center gap-3 cursor-pointer">
-      <input
-        type="checkbox"
-        checked={checked}
-        onChange={(e) => onChange(e.target.checked)}
-        className="w-5 h-5 rounded accent-amber-600"
-      />
-      <span className="flex items-center gap-2 text-sm text-amber-800">
-        {icon}
-        {label}
-      </span>
-    </label>
   );
 }
