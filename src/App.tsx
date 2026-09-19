@@ -33,14 +33,14 @@ function App() {
     tickerVolume: defaultSettings.tickerVolume,
     celebrationVolume: defaultSettings.celebrationVolume,
     autoRemoveWinner: defaultSettings.autoRemoveWinner,
-    customLogo: null,
+    customLogo: '/LOGO.png', // Default bundled logo
     customBg: null,
     useCustomBg: false,
     customVictoryAudio: null,
     palette: ONAM_PALETTE,
     paletteName: 'Onam Festive',
-    eventTitle: defaultSettings.eventTitle,
-    eventSubtitle: defaultSettings.eventSubtitle,
+    eventTitle: 'Onaghosham 2026', // Custom default event title
+    eventSubtitle: 'Grand Lucky Draw', // Custom default subtitle
     titleTheme: 'gold',
     titleCustomColor: '#F59E0B',
     sliceFont: defaultSettings.sliceFont as SettingsState['sliceFont'],
@@ -134,7 +134,8 @@ function App() {
   useEffect(() => {
     const init = async () => {
       const persisted = loadSettings();
-      const logo = await loadAsset('customLogo');
+      // Fallback to bundled logo if not explicitly overwritten in IndexedDB
+      const logo = (await loadAsset('customLogo')) || '/LOGO.png';
       const bg = await loadAsset('customBg');
       const victoryAudio = await loadAsset('customVictoryAudio');
 
@@ -148,8 +149,8 @@ function App() {
         customBg: bg,
         useCustomBg: persisted.useCustomBg && !!bg,
         customVictoryAudio: victoryAudio,
-        eventTitle: persisted.eventTitle || defaultSettings.eventTitle,
-        eventSubtitle: persisted.eventSubtitle || defaultSettings.eventSubtitle,
+        eventTitle: persisted.eventTitle || 'Onaghosham 2026',
+        eventSubtitle: persisted.eventSubtitle || 'Grand Lucky Draw',
         titleTheme: (persisted as any).titleTheme || 'gold',
         titleCustomColor: (persisted as any).titleCustomColor || '#F59E0B',
         sliceFont: (persisted.sliceFont || defaultSettings.sliceFont) as SettingsState['sliceFont'],
@@ -199,7 +200,9 @@ function App() {
   }, [settings, muted]);
 
   useEffect(() => {
-    if (settings.customLogo) saveAsset('customLogo', settings.customLogo);
+    if (settings.customLogo && settings.customLogo !== '/LOGO.png') {
+      saveAsset('customLogo', settings.customLogo);
+    }
   }, [settings.customLogo]);
 
   useEffect(() => {
@@ -428,21 +431,23 @@ function App() {
 
       {/* Main content */}
       <main className={`relative z-10 flex-1 flex flex-col lg:flex-row gap-4 lg:gap-6 overflow-hidden ${isFullscreen ? 'p-0' : 'p-4 sm:p-6 lg:p-8'}`}>
-        {/* Left: Wheel stage - top padding ensures wheel clears the fullscreen title */}
+        {/* Left: Wheel stage scaled to max-w-[min(75vh,750px)] */}
         <div className={`flex-1 flex items-center justify-center min-h-0 ${isFullscreen ? 'pt-16 sm:pt-20 pb-16' : 'pb-20'}`}>
-          <SpinWheel
-            entries={entries}
-            palette={settings.palette}
-            logoImage={logoImage}
-            spinDuration={settings.spinDuration}
-            autoRemoveWinner={settings.autoRemoveWinner}
-            muted={muted}
-            tickerVolume={settings.tickerVolume}
-            audioEngine={audioEngine}
-            onSpinComplete={handleSpinComplete}
-            sliceFontCss={FONT_CSS[settings.sliceFont]}
-            borderStyle={settings.borderStyle}
-          />
+          <div className="relative z-10 w-full max-w-[min(75vh,750px)] aspect-square flex items-center justify-center">
+            <SpinWheel
+              entries={entries}
+              palette={settings.palette}
+              logoImage={logoImage}
+              spinDuration={settings.spinDuration}
+              autoRemoveWinner={settings.autoRemoveWinner}
+              muted={muted}
+              tickerVolume={settings.tickerVolume}
+              audioEngine={audioEngine}
+              onSpinComplete={handleSpinComplete}
+              sliceFontCss={FONT_CSS[settings.sliceFont]}
+              borderStyle={settings.borderStyle}
+            />
+          </div>
         </div>
 
         {/* Right: Entries/Results panel — hidden in fullscreen */}
