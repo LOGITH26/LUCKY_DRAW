@@ -40,8 +40,9 @@ export default function WinnerModal({
     >
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
 
+      {/* Expanded container size to max-w-2xl */}
       <div
-        className="relative w-full max-w-lg rounded-3xl bg-gradient-to-b from-amber-50 via-yellow-50 to-amber-100
+        className="relative w-full max-w-2xl rounded-3xl bg-gradient-to-b from-amber-50 via-yellow-50 to-amber-100
           shadow-2xl border-2 border-amber-400/60 animate-[scaleIn_0.3s_ease]"
         onClick={(e) => e.stopPropagation()}
       >
@@ -64,36 +65,36 @@ export default function WinnerModal({
           className="absolute top-4 right-4 p-1.5 rounded-lg text-amber-700/50 hover:bg-amber-200/50 hover:text-amber-900 transition-all active:scale-90 z-10"
           aria-label="Close"
         >
-          <X className="w-5 h-5" />
+          <X className="w-6 h-6" />
         </button>
 
-        <div className="flex flex-col items-center px-6 py-8 sm:py-10">
+        <div className="flex flex-col items-center px-6 py-10 sm:py-12">
           {/* Trophy icon */}
-          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-yellow-400 to-amber-500 flex items-center justify-center shadow-lg ring-4 ring-amber-300/40 mb-5 animate-[bounceIn_0.5s_ease]">
-            <Trophy className="w-10 h-10 text-amber-900" />
+          <div className="w-24 h-24 rounded-full bg-gradient-to-br from-yellow-400 to-amber-500 flex items-center justify-center shadow-lg ring-4 ring-amber-300/40 mb-5 animate-[bounceIn_0.5s_ease]">
+            <Trophy className="w-12 h-12 text-amber-900" />
           </div>
 
           {/* Congratulations */}
           <h2
-            className="text-2xl sm:text-3xl font-bold text-amber-900 mb-1 tracking-wide"
+            className="text-3xl sm:text-4xl font-bold text-amber-900 mb-1 tracking-wide"
             style={{ fontFamily: headerFontCss }}
           >
             Congratulations!
           </h2>
           {eventSubtitle && (
-            <p className="text-sm text-amber-700/60 mb-1" style={{ fontFamily: headerFontCss }}>
+            <p className="text-base sm:text-lg text-amber-700/70 mb-1" style={{ fontFamily: headerFontCss }}>
               {eventSubtitle}
             </p>
           )}
-          <p className="text-sm text-amber-700/60 mb-6">The wheel has chosen</p>
+          <p className="text-sm sm:text-base text-amber-700/60 mb-6">The wheel has chosen</p>
 
-          {/* Winner display */}
+          {/* Enriched & Larger Winner display */}
           <div className="w-full mb-8">
             <div
-              className="text-center text-4xl sm:text-5xl md:text-6xl font-black text-transparent bg-clip-text
-                bg-gradient-to-b from-amber-700 via-amber-800 to-amber-900
-                py-6 px-4 rounded-2xl bg-white/60 border-2 border-amber-300/50 shadow-inner
-                break-words leading-tight"
+              className="text-center text-6xl sm:text-8xl md:text-9xl font-black text-transparent bg-clip-text
+                bg-gradient-to-b from-amber-600 via-amber-800 to-amber-950
+                py-8 px-6 rounded-3xl bg-white/70 border-2 border-amber-400/60 shadow-inner
+                break-words leading-none filter drop-shadow-sm"
               style={{ fontFamily: winnerFontCss }}
             >
               {winner}
@@ -101,12 +102,12 @@ export default function WinnerModal({
           </div>
 
           {/* Buttons */}
-          <div className="flex flex-col sm:flex-row gap-3 w-full">
+          <div className="flex flex-col sm:flex-row gap-3 w-full max-w-md">
             {!autoRemove && (
               <button
                 ref={removeRef}
                 onClick={onRemove}
-                className="flex-1 flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-semibold text-white
+                className="flex-1 flex items-center justify-center gap-2 px-6 py-4 rounded-xl font-bold text-base text-white
                   bg-gradient-to-b from-red-500 to-red-600 shadow-md hover:from-red-400 hover:to-red-500
                   active:scale-95 transition-all duration-200"
               >
@@ -117,7 +118,7 @@ export default function WinnerModal({
             <button
               ref={autoRemove ? removeRef : undefined}
               onClick={onKeep}
-              className="flex-1 flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-semibold text-amber-900
+              className="flex-1 flex items-center justify-center gap-2 px-6 py-4 rounded-xl font-bold text-base text-amber-900
                 bg-gradient-to-b from-yellow-300 to-amber-400 shadow-md hover:from-yellow-200 hover:to-amber-300
                 active:scale-95 transition-all duration-200"
             >
@@ -126,7 +127,7 @@ export default function WinnerModal({
             </button>
           </div>
 
-          <p className="text-xs text-amber-700/40 mt-5">
+          <p className="text-xs text-amber-700/50 mt-6">
             Press Spacebar or Enter to continue
           </p>
         </div>
