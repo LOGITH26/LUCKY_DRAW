@@ -98,7 +98,7 @@ export const defaultSettings: PersistedSettings = {
   celebrationVolume: 0.7,
   muted: false,
   autoRemoveWinner: true,
-  hasCustomLogo: false,
+  hasCustomLogo: true, // <--- Change to true
   hasCustomBg: false,
   useCustomBg: false,
   hasCustomVictoryAudio: false,
