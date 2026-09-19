@@ -473,8 +473,23 @@ export default function SettingsModal({
                   <Image className="w-4 h-4" /> Background
                 </label>
                 <p className="text-xs text-amber-700/60 mb-3">
-                  Upload a custom background image, or use the festive Onam preset.
+                  Choose the official JBMA event background preset or upload a custom image.
                 </p>
+
+                <div className="flex flex-wrap gap-2 mb-3">
+                  <button
+                    type="button"
+                    onClick={() => update({ customBg: '/assets/images/BACKGROUND.png', useCustomBg: true })}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-xl border text-sm font-medium transition-all ${
+                      state.customBg === '/assets/images/BACKGROUND.png' && state.useCustomBg
+                        ? 'bg-amber-600 text-white border-amber-700 shadow-md'
+                        : 'bg-white text-amber-900 border-amber-300 hover:bg-amber-50'
+                    }`}
+                  >
+                    <CheckCircle2 className="w-4 h-4" /> Use Default Event Background
+                  </button>
+                </div>
+
                 <input
                   type="file"
                   accept="image/png,image/jpeg,image/jpg"
