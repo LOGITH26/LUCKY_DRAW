@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import {
   X, Volume2, Play, Square, Upload, Music, Image, Palette as PaletteIcon,
   Clock, PartyPopper, Type, Sparkles, Leaf, Lightbulb, Flower2,
-  Sun, Pipette,
+  Sun, Pipette, CheckCircle2,
 } from 'lucide-react';
 import { PALETTE_OPTIONS } from '@/lib/colors';
 import { readFileAsDataURL } from '@/lib/storage';
@@ -427,8 +427,23 @@ export default function SettingsModal({
                   <Image className="w-4 h-4" /> Center Logo
                 </label>
                 <p className="text-xs text-amber-700/60 mb-3">
-                  Upload a PNG/JPG to display in the wheel's center hub. Leave empty for default Onam motif.
+                  Choose the official Onaghosham logo preset or upload your own image.
                 </p>
+                
+                <div className="flex flex-wrap gap-2 mb-3">
+                  <button
+                    type="button"
+                    onClick={() => update({ customLogo: '/assets/images/LOGO.png' })}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-xl border text-sm font-medium transition-all ${
+                      state.customLogo === '/assets/images/LOGO.png'
+                        ? 'bg-amber-600 text-white border-amber-700 shadow-md'
+                        : 'bg-white text-amber-900 border-amber-300 hover:bg-amber-50'
+                    }`}
+                  >
+                    <CheckCircle2 className="w-4 h-4" /> Use Default Onaghosham Logo
+                  </button>
+                </div>
+
                 <input
                   type="file"
                   accept="image/png,image/jpeg,image/jpg"
