@@ -33,14 +33,14 @@ function App() {
     tickerVolume: defaultSettings.tickerVolume,
     celebrationVolume: defaultSettings.celebrationVolume,
     autoRemoveWinner: defaultSettings.autoRemoveWinner,
-    customLogo: '/LOGO.png', // Default bundled logo
-    customBg: null,
-    useCustomBg: false,
+    customLogo: '/assets/images/LOGO.png',
+    customBg: '/assets/images/BACKGROUND.png',
+    useCustomBg: true,
     customVictoryAudio: null,
     palette: ONAM_PALETTE,
     paletteName: 'Onam Festive',
-    eventTitle: 'Onaghosham 2026', // Custom default event title
-    eventSubtitle: 'Grand Lucky Draw', // Custom default subtitle
+    eventTitle: 'Onaghosham 2026',
+    eventSubtitle: 'Grand Lucky Draw',
     titleTheme: 'gold',
     titleCustomColor: '#F59E0B',
     sliceFont: defaultSettings.sliceFont as SettingsState['sliceFont'],
@@ -134,9 +134,8 @@ function App() {
   useEffect(() => {
     const init = async () => {
       const persisted = loadSettings();
-      // Fallback to bundled logo if not explicitly overwritten in IndexedDB
-      const logo = (await loadAsset('customLogo')) || '/LOGO.png';
-      const bg = await loadAsset('customBg');
+      const logo = (await loadAsset('customLogo')) || '/assets/images/LOGO.png';
+      const bg = (await loadAsset('customBg')) || '/assets/images/BACKGROUND.png';
       const victoryAudio = await loadAsset('customVictoryAudio');
 
       const loaded: SettingsState = {
@@ -147,7 +146,7 @@ function App() {
         autoRemoveWinner: persisted.autoRemoveWinner,
         customLogo: logo,
         customBg: bg,
-        useCustomBg: persisted.useCustomBg && !!bg,
+        useCustomBg: persisted.useCustomBg ?? true,
         customVictoryAudio: victoryAudio,
         eventTitle: persisted.eventTitle || 'Onaghosham 2026',
         eventSubtitle: persisted.eventSubtitle || 'Grand Lucky Draw',
@@ -200,13 +199,15 @@ function App() {
   }, [settings, muted]);
 
   useEffect(() => {
-    if (settings.customLogo && settings.customLogo !== '/LOGO.png') {
+    if (settings.customLogo && settings.customLogo !== '/assets/images/LOGO.png') {
       saveAsset('customLogo', settings.customLogo);
     }
   }, [settings.customLogo]);
 
   useEffect(() => {
-    if (settings.customBg) saveAsset('customBg', settings.customBg);
+    if (settings.customBg && settings.customBg !== '/assets/images/BACKGROUND.png') {
+      saveAsset('customBg', settings.customBg);
+    }
   }, [settings.customBg]);
 
   useEffect(() => {
@@ -431,9 +432,9 @@ function App() {
 
       {/* Main content */}
       <main className={`relative z-10 flex-1 flex flex-col lg:flex-row gap-4 lg:gap-6 overflow-hidden ${isFullscreen ? 'p-0' : 'p-4 sm:p-6 lg:p-8'}`}>
-        {/* Left: Wheel stage scaled to max-w-[min(75vh,750px)] */}
-        <div className={`flex-1 flex items-center justify-center min-h-0 ${isFullscreen ? 'pt-16 sm:pt-20 pb-16' : 'pb-20'}`}>
-          <div className="relative z-10 w-full max-w-[min(75vh,750px)] aspect-square flex items-center justify-center">
+        {/* Left: Wheel stage scaled up to 85vh / 840px */}
+        <div className={`flex-1 flex items-center justify-center min-h-0 ${isFullscreen ? 'pt-14 pb-14' : 'pb-20'}`}>
+          <div className="relative z-10 w-full max-w-[min(85vh,840px)] aspect-square flex items-center justify-center">
             <SpinWheel
               entries={entries}
               palette={settings.palette}
@@ -470,7 +471,7 @@ function App() {
       {isFullscreen && (
         <>
           {/* Title + subtitle bar */}
-          <div className="fixed top-0 left-0 right-0 z-30 flex flex-col items-center justify-center px-20 py-3 pointer-events-none gap-0.5">
+          <div className="fixed top-0 left-0 right-0 z-30 flex flex-col items-center justify-center px-20 py-2.5 pointer-events-none gap-0.5">
             {editingTitle ? (
               <input
                 autoFocus
@@ -510,7 +511,7 @@ function App() {
             {/* Subtitle with deep maroon text, enhanced spacing & shadow */}
             {settings.eventSubtitle && (
               <span
-                className="pointer-events-auto mt-2 text-sm sm:text-base font-black tracking-[0.25em] uppercase text-[#7f1d1d] drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)]"
+                className="pointer-events-auto mt-1 text-sm sm:text-base font-black tracking-[0.25em] uppercase text-[#7f1d1d] drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)]"
                 style={{ fontFamily: headerFontCss }}
               >
                 {settings.eventSubtitle}
